@@ -1,0 +1,8 @@
+{
+  "name": "Bager Simulator v1",
+  "short_name": "Bager",
+  "start_url": "./",
+  "display": "fullscreen",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117"
+}
