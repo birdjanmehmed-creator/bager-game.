@@ -1,1234 +1,2187 @@
 <!doctype html>
 <html lang="bg">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="theme-color" content="#0d1117" />
-<title>Bager Simulator v1</title>
-<style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:none}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#0d1117;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff}
-#game{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}
-#boot{position:fixed;inset:0;z-index:100;background:linear-gradient(#111820,#090d11);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px}
-#boot h1{font-size:28px;margin:0;color:#ffc83d}
-#boot p{font-size:13px;color:#b7c0c9;margin:0;max-width:340px;line-height:1.5}
-#startBtn{margin-top:8px;border:0;border-radius:14px;padding:15px 28px;font-size:20px;font-weight:900;background:#ffc83d;color:#151515;box-shadow:0 8px 30px #0008}
-.hide{display:none!important}
-#hud{position:fixed;left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));z-index:10;display:flex;gap:5px;pointer-events:none}
-.card{flex:1;background:#0b1117cc;border:1px solid #ffffff2b;border-radius:9px;padding:5px 7px;backdrop-filter:blur(10px);min-width:0}
-.card small{font-size:7px;color:#95a1ad;font-weight:800;letter-spacing:.08em}
-.card b{display:block;margin-top:2px;color:#ffc83d;font:700 14px ui-monospace,Menlo,monospace;white-space:nowrap}
-#mission{position:fixed;z-index:9;top:58px;left:50%;transform:translateX(-50%);background:#081017bf;border:1px solid #ffffff26;padding:7px 10px;border-radius:9px;font-size:10px;font-weight:800;white-space:nowrap;pointer-events:none}
-.joy{position:fixed;z-index:20;bottom:max(12px,env(safe-area-inset-bottom));width:140px;height:140px;border-radius:50%;background:#111922b5;border:2px solid #ffffff35;box-shadow:0 8px 28px #0009,inset 0 0 30px #0008;backdrop-filter:blur(8px)}
-.joy.left{left:max(10px,env(safe-area-inset-left))}
-.joy.right{right:max(10px,env(safe-area-inset-right))}
-.knob{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#8290a0,#25303a 72%);border:2px solid #93a0ad;box-shadow:0 6px 16px #000a;transform:translate3d(0,0,0)}
-.knob.on{background:radial-gradient(circle at 35% 30%,#ffe7a4,#df9714 72%);border-color:#ffc83d}
-.label{position:absolute;font-size:8px;font-weight:900;color:#e5ebf0;text-shadow:0 1px 3px #000}
-.up{top:6px;left:50%;transform:translateX(-50%)}
-.down{bottom:6px;left:50%;transform:translateX(-50%)}
-.lft{left:7px;top:50%;transform:translateY(-50%)}
-.rgt{right:7px;top:50%;transform:translateY(-50%)}
-#travel{position:fixed;z-index:20;left:50%;bottom:max(16px,env(safe-area-inset-bottom));transform:translateX(-50%);width:72px;height:116px;background:#111922b5;border:2px solid #ffffff35;border-radius:12px;box-shadow:0 8px 28px #0009;backdrop-filter:blur(8px)}
-#travelKnob{position:absolute;left:9px;top:44px;width:50px;height:26px;border-radius:6px;background:linear-gradient(#718090,#29343e);border:2px solid #8c99a6}
-.tlbl{position:absolute;left:0;right:0;text-align:center;font-size:8px;font-weight:900;color:#e5ebf0}
-.tf{top:7px}
-.tb{bottom:7px}
-#rpmBox{position:fixed;z-index:20;right:max(18px,env(safe-area-inset-right));bottom:166px;display:flex;align-items:center;gap:5px;background:#111922b5;border:1px solid #ffffff30;border-radius:9px;padding:5px 7px}
-#rpmBox button{border:0;border-radius:7px;width:34px;height:32px;font-size:20px;font-weight:900;background:#2a3540;color:#fff}
-#rpmVal{min-width:22px;text-align:center;color:#ffc83d;font:700 14px ui-monospace,monospace}
-#cash{color:#4ade80!important}
-@media (orientation:portrait){
-  #boot:after{
-    content:"Завърти телефона хоризонтално";
-    margin-top:8px;
-    color:#ffc83d;
-    font-size:18px;
-    font-weight:900
-  }
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0e141b" />
+  <title>Bager Mobile Prototype</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #0e141b;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      touch-action: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    #hud {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      color: white;
+      padding:
+        max(10px, env(safe-area-inset-top))
+        max(12px, env(safe-area-inset-right))
+        max(10px, env(safe-area-inset-bottom))
+        max(12px, env(safe-area-inset-left));
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: rgba(8, 12, 17, 0.68);
+      border: 1px solid rgba(255,255,255,0.13);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 14px;
+      padding: 8px 11px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    #status {
+      min-width: 170px;
+    }
+
+    #mission {
+      text-align: right;
+      max-width: 220px;
+    }
+
+    .accent {
+      color: #ffd34d;
+      font-weight: 800;
+    }
+
+    .good {
+      color: #7dff9b;
+      font-weight: 800;
+    }
+
+    .controls {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .joystick {
+      position: absolute;
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.23);
+      background: rgba(255,255,255,0.07);
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    .stick {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 56px;
+      height: 56px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: rgba(255,211,77,0.88);
+      border: 2px solid rgba(0,0,0,0.2);
+      box-shadow: 0 5px 18px rgba(0,0,0,0.25);
+    }
+
+    #moveJoy {
+      left: max(18px, env(safe-area-inset-left));
+      bottom: max(18px, env(safe-area-inset-bottom));
+    }
+
+    #armJoy {
+      right: max(18px, env(safe-area-inset-right));
+      bottom: max(18px, env(safe-area-inset-bottom));
+    }
+
+    .label {
+      position: absolute;
+      width: 132px;
+      text-align: center;
+      color: rgba(255,255,255,0.82);
+      font-size: 11px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px #000;
+    }
+
+    #moveLabel {
+      left: max(18px, env(safe-area-inset-left));
+      bottom: 156px;
+    }
+
+    #armLabel {
+      right: max(18px, env(safe-area-inset-right));
+      bottom: 156px;
+    }
+
+    .btn {
+      position: absolute;
+      pointer-events: auto;
+      touch-action: none;
+      user-select: none;
+      min-width: 58px;
+      height: 46px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,0.17);
+      background: rgba(12,18,25,0.75);
+      color: #fff;
+      font-weight: 800;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+    }
+
+    .btn:active,
+    .btn.active {
+      background: rgba(255,211,77,0.8);
+      color: #121212;
+    }
+
+    #swingL {
+      right: 170px;
+      bottom: 90px;
+    }
+
+    #swingR {
+      right: 100px;
+      bottom: 90px;
+    }
+
+    #bucketIn {
+      right: 170px;
+      bottom: 38px;
+    }
+
+    #bucketOut {
+      right: 100px;
+      bottom: 38px;
+    }
+
+    #cameraBtn {
+      right: max(18px, env(safe-area-inset-right));
+      top: 75px;
+    }
+
+    #resetBtn {
+      right: max(18px, env(safe-area-inset-right));
+      top: 127px;
+    }
+
+    #helpBtn {
+      left: max(18px, env(safe-area-inset-left));
+      top: 75px;
+    }
+
+    #rotateHint {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      background: #0e141b;
+      color: #fff;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    #help {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      background: rgba(4,7,10,0.90);
+      color: white;
+      padding: 28px;
+      overflow: auto;
+    }
+
+    #help .panel {
+      max-width: 560px;
+      margin: auto;
+      background: #151d26;
+      border-radius: 18px;
+      padding: 20px;
+    }
+
+    #help h2 {
+      margin-top: 0;
+    }
+
+    #help button {
+      width: 100%;
+      height: 46px;
+      border: 0;
+      border-radius: 12px;
+      background: #ffd34d;
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    @media (orientation: portrait) {
+      #rotateHint {
+        display: flex;
+      }
+    }
+
+    @media (max-height: 500px) {
+      .joystick {
+        width: 116px;
+        height: 116px;
+      }
+
+      .label {
+        width: 116px;
+        bottom: 138px !important;
+      }
+
+      #swingL {
+        right: 152px;
+        bottom: 78px;
+      }
+
+      #swingR {
+        right: 88px;
+        bottom: 78px;
+      }
+
+      #bucketIn {
+        right: 152px;
+        bottom: 28px;
+      }
+
+      #bucketOut {
+        right: 88px;
+        bottom: 28px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="game"></div>
+  <div id="rotateHint">
+    📱 Завърти телефона хоризонтално<br>
+    за управление на багера 🚜
+  </div>
 
-<div id="boot">
-  <h1>Bager Simulator v1</h1>
-  <p>Мобилна 3D версия: багер, камион, копаене, товарене, гориво и мисия. Най-добре работи хоризонтално в Safari/Chrome.</p>
-  <button id="startBtn">СТАРТ</button>
-</div>
+  <div id="hud">
 
-<div id="hud">
-  <div class="card"><small>КОФА</small><b id="hBucket">0%</b></div>
-  <div class="card"><small>КАМИОН</small><b id="hTruck">0%</b></div>
-  <div class="card"><small>ГОРИВО</small><b id="hFuel">100%</b></div>
-  <div class="card"><small>ПАРИ</small><b id="cash">€0</b></div>
-</div>
+    <div class="topbar">
 
-<div id="mission">Мисия: натовари 3 камиона</div>
+      <div id="status" class="card">
+        Скорост:
+        <span id="speed" class="accent">0.0</span>
+        km/h
+        <br>
 
-<div class="joy left" id="joyL">
-  <span class="label up">РЪКОХ.</span>
-  <span class="label down">НАВЪТРЕ</span>
-  <span class="label lft">◀ ЗАВ.</span>
-  <span class="label rgt">ЗАВ. ▶</span>
-  <div class="knob" id="knobL"></div>
-</div>
+        Наклон:
+        <span id="tilt">0.0°</span>
+        <br>
 
-<div class="joy right" id="joyR">
-  <span class="label up">СТРЕЛА ▼</span>
-  <span class="label down">СТРЕЛА ▲</span>
-  <span class="label lft">КОФА ↺</span>
-  <span class="label rgt">ИЗСИП ↻</span>
-  <div class="knob" id="knobR"></div>
-</div>
+        Двигател:
+        <span class="good">ON</span>
+      </div>
 
-<div id="travel">
-  <span class="tlbl tf">НАПРЕД</span>
-  <span class="tlbl tb">НАЗАД</span>
-  <div id="travelKnob"></div>
-</div>
+      <div id="mission" class="card">
+        Задача:
+        стигни до
+        <span class="accent">жълтата зона</span>
+        <br>
+        после тренирай стрелата и кофата.
+      </div>
 
-<div id="rpmBox">
-  <button id="rpmDown">−</button>
-  <div id="rpmVal">7</div>
-  <button id="rpmUp">+</button>
-</div>
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+    <div class="controls">
 
-<script>
-(()=>{'use strict';
+      <div id="moveLabel" class="label">
+        ДВИЖЕНИЕ
+      </div>
 
-const $=id=>document.getElementById(id);
+      <div id="moveJoy" class="joystick">
+        <div class="stick"></div>
+      </div>
 
-const H={
-  bucket:$('hBucket'),
-  truck:$('hTruck'),
-  fuel:$('hFuel'),
-  cash:$('cash'),
-  mission:$('mission')
-};
+      <div id="armLabel" class="label">
+        СТРЕЛА / РАМО
+      </div>
 
-let renderer,scene,camera,clock;
-let excavator,upper,boomPivot,armPivot,bucketPivot,bucketSoil;
-let truck,truckSoil;
-let terrain,terrainGeo,terrainPos;
+      <div id="armJoy" class="joystick">
+        <div class="stick"></div>
+      </div>
 
-let started=false;
-let rpm=7;
+      <div id="swingL" class="btn">
+        ↶ КУЛА
+      </div>
 
-const S={
-  L:{x:0,y:0},
-  R:{x:0,y:0},
-  T:{x:0,y:0}
-};
+      <div id="swingR" class="btn">
+        КУЛА ↷
+      </div>
 
-const M={
-  boom:-0.38,
-  arm:0.90,
-  bucket:0.15,
-  swing:0,
-  z:-8,
-  load:0,
-  loadCap:1.0,
-  fuel:100,
-  money:0,
-  trucks:0,
-  missionTarget:3
-};
+      <div id="bucketIn" class="btn">
+        КОФА +
+      </div>
 
-const V={
-  boom:0,
-  arm:0,
-  bucket:0,
-  swing:0,
-  travel:0
-};
+      <div id="bucketOut" class="btn">
+        КОФА −
+      </div>
 
-const terrainN=80;
-const terrainSize=80;
-const cell=terrainSize/terrainN;
-const half=terrainSize/2;
+      <div id="cameraBtn" class="btn">
+        КАМЕРА
+      </div>
 
-const terrainH=new Float32Array((terrainN+1)*(terrainN+1));
-const baseH=new Float32Array((terrainN+1)*(terrainN+1));
+      <div id="resetBtn" class="btn">
+        RESET
+      </div>
 
-function idx(ix,iz){return iz*(terrainN+1)+ix}
-function wx(ix){return -half+ix*cell}
-function wz(iz){return -half+iz*cell}
+      <div id="helpBtn" class="btn">
+        ?
+      </div>
 
-function noise(x,z){
-  return Math.sin(x*.09)*.22+
-         Math.sin(z*.07)*.25+
-         Math.sin((x+z)*.18)*.08
-}
+    </div>
 
-function mat(color,rough=.8,metal=.1){
-  return new THREE.MeshStandardMaterial({
-    color,
-    roughness:rough,
-    metalness:metal
-  })
-}
+  </div>
 
-const MAT={
-  yellow:mat(0xe2a21b,.55,.25),
-  yellowDark:mat(0xb97c0c,.65,.3),
-  dark:mat(0x222a30,.78,.35),
-  rubber:mat(0x11161a,.95,.05),
-  glass:new THREE.MeshStandardMaterial({
-    color:0x83b7d1,
-    transparent:true,
-    opacity:.55,
-    roughness:.15,
-    metalness:.2
-  }),
-  soil:mat(0x5c4936,1,0),
-  red:mat(0xb43b31,.5,.25),
-  steel:mat(0x7e8891,.45,.7),
-  green:mat(0x667b55,1,0)
-};
+  <div id="help">
 
-function box(w,h,d,m){
-  const o=new THREE.Mesh(
-    new THREE.BoxGeometry(w,h,d),
-    m
-  );
-  o.castShadow=true;
-  o.receiveShadow=true;
-  return o;
-}
+    <div class="panel">
 
-function cyl(r,h,m,seg=18){
-  const o=new THREE.Mesh(
-    new THREE.CylinderGeometry(r,r,h,seg),
-    m
-  );
-  o.castShadow=true;
-  o.receiveShadow=true;
-  return o;
-}
+      <h2>Управление 🚜</h2>
 
-function buildTerrain(){
+      <p>
+        <b>Ляв джойстик:</b>
+        напред/назад и завиване.
+      </p>
 
-  const v=[];
-  const uv=[];
-  const ind=[];
+      <p>
+        <b>Десен джойстик:</b>
+        стрелата нагоре/надолу
+        и рамото навън/навътре.
+      </p>
 
-  for(let iz=0;iz<=terrainN;iz++){
-    for(let ix=0;ix<=terrainN;ix++){
+      <p>
+        <b>КУЛА:</b>
+        въртене на горната част
+        наляво/надясно.
+      </p>
 
-      const x=wx(ix);
-      const z=wz(iz);
-      const h=noise(x,z);
+      <p>
+        <b>КОФА:</b>
+        отваряне/затваряне.
+      </p>
 
-      terrainH[idx(ix,iz)]=h;
-      baseH[idx(ix,iz)]=h;
+      <p>
+        <b>КАМЕРА:</b>
+        сменя изгледа.
+      </p>
 
-      v.push(x,h,z);
-      uv.push(ix/terrainN,iz/terrainN);
-    }
-  }
+      <p>
+        Теренът е нарочно неравен —
+        машината се накланя според земята.
+      </p>
 
-  for(let z=0;z<terrainN;z++){
-    for(let x=0;x<terrainN;x++){
+      <button id="closeHelp">
+        РАЗБРАХ
+      </button>
 
-      const a=idx(x,z);
-      const b=idx(x+1,z);
-      const c=idx(x,z+1);
-      const d=idx(x+1,z+1);
+    </div>
 
-      ind.push(a,c,b,b,c,d);
-    }
-  }
+  </div>
 
-  terrainGeo=new THREE.BufferGeometry();
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 
-  terrainGeo.setAttribute(
-    'position',
-    new THREE.Float32BufferAttribute(v,3)
-  );
+  <script>
 
-  terrainGeo.setAttribute(
-    'uv',
-    new THREE.Float32BufferAttribute(uv,2)
-  );
+  (() => {
 
-  terrainGeo.setIndex(ind);
-  terrainGeo.computeVertexNormals();
+    const scene = new THREE.Scene();
 
-  terrainPos=terrainGeo.attributes.position;
+    scene.background =
+      new THREE.Color(0x87b8df);
 
-  terrain=new THREE.Mesh(
-    terrainGeo,
-    MAT.green
-  );
-
-  terrain.receiveShadow=true;
-  scene.add(terrain);
-
-  const road=box(
-    16,
-    .12,
-    40,
-    mat(0x735d45,1,0)
-  );
-
-  road.position.set(0,.04,0);
-
-  scene.add(road);
-}
-
-function hAt(x,z){
-
-  let fx=(x+half)/cell;
-  let fz=(z+half)/cell;
-
-  let ix=Math.max(
-    0,
-    Math.min(
-      terrainN-1,
-      Math.floor(fx)
-    )
-  );
-
-  let iz=Math.max(
-    0,
-    Math.min(
-      terrainN-1,
-      Math.floor(fz)
-    )
-  );
-
-  let tx=fx-ix;
-  let tz=fz-iz;
-
-  const a=terrainH[idx(ix,iz)];
-  const b=terrainH[idx(ix+1,iz)];
-  const c=terrainH[idx(ix,iz+1)];
-  const d=terrainH[idx(ix+1,iz+1)];
-
-  return (a*(1-tx)+b*tx)*(1-tz)+
-         (c*(1-tx)+d*tx)*tz;
-}
-
-function deform(x,z,r,amt){
-
-  let changed=false;
-
-  const i0=Math.max(
-    0,
-    Math.floor((x-r+half)/cell)
-  );
-
-  const i1=Math.min(
-    terrainN,
-    Math.ceil((x+r+half)/cell)
-  );
-
-  const z0=Math.max(
-    0,
-    Math.floor((z-r+half)/cell)
-  );
-
-  const z1=Math.min(
-    terrainN,
-    Math.ceil((z+r+half)/cell)
-  );
-
-  for(let iz=z0;iz<=z1;iz++){
-
-    for(let ix=i0;ix<=i1;ix++){
-
-      const d=Math.hypot(
-        wx(ix)-x,
-        wz(iz)-z
+    scene.fog =
+      new THREE.Fog(
+        0x87b8df,
+        35,
+        95
       );
 
-      if(d>r)continue;
-
-      const k=1-d/r;
-      const i=idx(ix,iz);
-
-      terrainH[i]+=amt*k;
-
-      terrainPos.setY(
-        i,
-        terrainH[i]
+    const camera =
+      new THREE.PerspectiveCamera(
+        58,
+        innerWidth / innerHeight,
+        0.1,
+        180
       );
 
-      changed=true;
-    }
-  }
+    const renderer =
+      new THREE.WebGLRenderer({
+        antialias: true,
+        powerPreference: "high-performance"
+      });
 
-  if(changed){
-    terrainPos.needsUpdate=true;
-    terrainGeo.computeVertexNormals();
-    terrainGeo.attributes.normal.needsUpdate=true;
-  }
-}
-
-function buildExcavator(){
-
-  excavator=new THREE.Group();
-  scene.add(excavator);
-
-  const base=new THREE.Group();
-  excavator.add(base);
-
-  [-1.25,1.25].forEach(s=>{
-
-    const track=box(
-      .75,.45,4.8,
-      MAT.rubber
+    renderer.setSize(
+      innerWidth,
+      innerHeight
     );
 
-    track.position.set(
-      s,.4,0
+    renderer.setPixelRatio(
+      Math.min(
+        devicePixelRatio,
+        1.75
+      )
     );
 
-    base.add(track);
+    renderer.shadowMap.enabled = true;
 
-    for(let z=-2;z<=2;z+=.55){
+    renderer.shadowMap.type =
+      THREE.PCFSoftShadowMap;
 
-      const p=box(
-        .9,.12,.34,
-        MAT.dark
+    document.body.prepend(
+      renderer.domElement
+    );
+
+    scene.add(
+      new THREE.HemisphereLight(
+        0xeaf6ff,
+        0x6d694e,
+        1.5
+      )
+    );
+
+    const sun =
+      new THREE.DirectionalLight(
+        0xffffff,
+        2.1
       );
 
-      p.position.set(
-        s,.16,z
-      );
-
-      base.add(p);
-    }
-  });
-
-  const turn=cyl(
-    1.35,.35,
-    MAT.dark,
-    28
-  );
-
-  turn.position.y=.85;
-  base.add(turn);
-
-  upper=new THREE.Group();
-  upper.position.y=1.05;
-  base.add(upper);
-
-  const body=box(
-    2.7,1.15,3.6,
-    MAT.yellow
-  );
-
-  body.position.set(
-    .2,.7,-.55
-  );
-
-  upper.add(body);
-
-  const counter=box(
-    2.8,1.05,1.0,
-    MAT.yellowDark
-  );
-
-  counter.position.set(
-    .2,.65,-2.55
-  );
-
-  upper.add(counter);
-
-  const cab=box(
-    1.35,1.8,1.65,
-    MAT.dark
-  );
-
-  cab.position.set(
-    -1.05,1.55,.3
-  );
-
-  upper.add(cab);
-
-  const win=box(
-    1.05,1.2,.04,
-    MAT.glass
-  );
-
-  win.position.set(
-    -1.05,1.7,1.14
-  );
-
-  upper.add(win);
-
-  boomPivot=new THREE.Group();
-
-  boomPivot.position.set(
-    .65,1.45,1.2
-  );
-
-  upper.add(boomPivot);
-
-  const boom=box(
-    .55,.55,5.0,
-    MAT.yellow
-  );
-
-  boom.position.z=2.45;
-
-  boomPivot.add(boom);
-
-  armPivot=new THREE.Group();
-
-  armPivot.position.z=4.9;
-
-  boomPivot.add(armPivot);
-
-  const arm=box(
-    .42,.42,3.6,
-    MAT.yellow
-  );
-
-  arm.position.z=1.75;
-
-  armPivot.add(arm);
-
-  bucketPivot=new THREE.Group();
-
-  bucketPivot.position.z=3.45;
-
-  armPivot.add(bucketPivot);
-
-  const bucket=box(
-    1.25,.8,1.0,
-    MAT.yellowDark
-  );
-
-  bucket.position.set(
-    0,-.35,.45
-  );
-
-  bucket.rotation.x=.18;
-
-  bucketPivot.add(bucket);
-
-  bucketSoil=new THREE.Mesh(
-    new THREE.SphereGeometry(.52,16,10),
-    MAT.soil
-  );
-
-  bucketSoil.scale.set(
-    1,.5,1
-  );
-
-  bucketSoil.position.set(
-    0,-.12,.45
-  );
-
-  bucketPivot.add(bucketSoil);
-}
-
-function buildTruck(){
-
-  truck=new THREE.Group();
-  scene.add(truck);
-
-  const frame=box(
-    2.3,.35,7.6,
-    MAT.dark
-  );
-
-  frame.position.y=.75;
-
-  truck.add(frame);
-
-  const bed=box(
-    2.7,1.15,4.6,
-    MAT.steel
-  );
-
-  bed.position.set(
-    0,1.45,-1.2
-  );
-
-  truck.add(bed);
-
-  const cab=box(
-    2.35,1.85,2.0,
-    MAT.red
-  );
-
-  cab.position.set(
-    0,1.7,2.5
-  );
-
-  truck.add(cab);
-
-  const glass=box(
-    1.9,.75,.05,
-    MAT.glass
-  );
-
-  glass.position.set(
-    0,2.05,3.51
-  );
-
-  truck.add(glass);
-
-  [-1.2,1.2].forEach(x=>{
-    [-2.4,0,2.5].forEach(z=>{
-
-      const w=cyl(
-        .5,.45,
-        MAT.rubber,
-        20
-      );
-
-      w.rotation.z=Math.PI/2;
-
-      w.position.set(
-        x,.45,z
-      );
-
-      truck.add(w);
-    })
-  });
-
-  truckSoil=box(
-    2.35,.75,4.1,
-    MAT.soil
-  );
-
-  truckSoil.position.set(
-    0,1.75,-1.2
-  );
-
-  truck.add(truckSoil);
-
-  truck.position.set(
-    -7,0,-8
-  );
-}
-
-function init(){
-
-  renderer=new THREE.WebGLRenderer({
-    antialias:true,
-    powerPreference:'high-performance'
-  });
-
-  renderer.setPixelRatio(
-    Math.min(devicePixelRatio,2)
-  );
-
-  renderer.setSize(
-    innerWidth,
-    innerHeight
-  );
-
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=
-    THREE.PCFSoftShadowMap;
-
-  renderer.outputEncoding=
-    THREE.sRGBEncoding;
-
-  $('game').appendChild(
-    renderer.domElement
-  );
-
-  scene=new THREE.Scene();
-
-  scene.background=
-    new THREE.Color(0x8fc7e8);
-
-  scene.fog=
-    new THREE.Fog(
-      0x9fc9dd,
+    sun.position.set(
+      18,
       28,
-      90
+      10
     );
 
-  camera=new THREE.PerspectiveCamera(
-    68,
-    innerWidth/innerHeight,
-    .05,
-    160
-  );
+    sun.castShadow = true;
 
-  clock=new THREE.Clock();
-
-  const hemi=
-    new THREE.HemisphereLight(
-      0xcbe7f8,
-      0x5f533d,
-      1.0
+    sun.shadow.mapSize.set(
+      1024,
+      1024
     );
 
-  scene.add(hemi);
+    sun.shadow.camera.left = -35;
+    sun.shadow.camera.right = 35;
+    sun.shadow.camera.top = 35;
+    sun.shadow.camera.bottom = -35;
 
-  const sun=
-    new THREE.DirectionalLight(
-      0xfff1d4,
-      2.2
-    );
+    scene.add(sun);
 
-  sun.position.set(
-    -18,25,8
-  );
 
-  sun.castShadow=true;
+    function terrainHeight(x, z) {
 
-  sun.shadow.mapSize.set(
-    2048,2048
-  );
-
-  sun.shadow.camera.left=-25;
-  sun.shadow.camera.right=25;
-  sun.shadow.camera.top=25;
-  sun.shadow.camera.bottom=-25;
-
-  scene.add(sun);
-
-  buildTerrain();
-  buildExcavator();
-  buildTruck();
-
-  addEventListener(
-    'resize',
-    resize
-  );
-
-  resize();
-  loop();
-}
-
-function resize(){
-
-  if(!renderer)return;
-
-  renderer.setSize(
-    innerWidth,
-    innerHeight
-  );
-
-  camera.aspect=
-    innerWidth/innerHeight;
-
-  camera.updateProjectionMatrix();
-}
-
-function bind(el,knob,state,vertical=false){
-
-  let pid=null;
-
-  function set(cx,cy){
-
-    const r=
-      el.getBoundingClientRect();
-
-    let dx=
-      vertical
-      ?0
-      :cx-r.left-r.width/2;
-
-    let dy=
-      cy-r.top-r.height/2;
-
-    const max=40;
-
-    const m=
-      Math.hypot(dx,dy);
-
-    if(m>max){
-      dx*=max/m;
-      dy*=max/m;
-    }
-
-    state.x=dx/max;
-    state.y=dy/max;
-
-    knob.style.transform=
-      `translate3d(${dx}px,${dy}px,0)`;
-
-    knob.classList.add('on');
-  }
-
-  function stop(){
-
-    pid=null;
-
-    state.x=0;
-    state.y=0;
-
-    knob.style.transform=
-      'translate3d(0,0,0)';
-
-    knob.classList.remove('on');
-  }
-
-  el.addEventListener(
-    'pointerdown',
-    e=>{
-
-      e.preventDefault();
-
-      pid=e.pointerId;
-
-      try{
-        el.setPointerCapture(pid)
-      }catch(_){}
-
-      set(
-        e.clientX,
-        e.clientY
+      return (
+        0.42 * Math.sin(x * 0.20)
+        +
+        0.28 * Math.cos(z * 0.27)
+        +
+        0.17 * Math.sin((x + z) * 0.38)
       );
+
     }
-  );
 
-  el.addEventListener(
-    'pointermove',
-    e=>{
 
-      if(e.pointerId===pid){
+    const size = 90;
 
-        e.preventDefault();
+    const seg = 72;
 
-        set(
-          e.clientX,
-          e.clientY
+
+    const geo =
+      new THREE.PlaneGeometry(
+        size,
+        size,
+        seg,
+        seg
+      );
+
+    geo.rotateX(
+      -Math.PI / 2
+    );
+
+
+    const p =
+      geo.attributes.position;
+
+
+    for (
+      let i = 0;
+      i < p.count;
+      i++
+    ) {
+
+      const x =
+        p.getX(i);
+
+      const z =
+        p.getZ(i);
+
+      p.setY(
+        i,
+        terrainHeight(x, z)
+      );
+
+    }
+
+
+    geo.computeVertexNormals();
+
+
+    const ground =
+      new THREE.Mesh(
+
+        geo,
+
+        new THREE.MeshStandardMaterial({
+
+          color: 0x6f7d45,
+
+          roughness: 1
+
+        })
+
+      );
+
+
+    ground.receiveShadow = true;
+
+    scene.add(ground);
+
+
+    const grid =
+      new THREE.GridHelper(
+        90,
+        45,
+        0x444444,
+        0x6b724f
+      );
+
+    grid.position.y = 0.03;
+
+    grid.material.opacity = 0.22;
+
+    grid.material.transparent = true;
+
+    scene.add(grid);
+
+
+
+    for (
+      let i = 0;
+      i < 18;
+      i++
+    ) {
+
+      const x =
+        -28 + Math.random() * 56;
+
+      const z =
+        -28 + Math.random() * 56;
+
+      const s =
+        0.35 + Math.random() * 0.9;
+
+
+      const rock =
+        new THREE.Mesh(
+
+          new THREE.DodecahedronGeometry(
+            s,
+            0
+          ),
+
+          new THREE.MeshStandardMaterial({
+
+            color: 0x76736d,
+
+            roughness: 1
+
+          })
+
         );
-      }
-    }
-  );
 
-  el.addEventListener(
-    'pointerup',
-    e=>{
-      if(e.pointerId===pid)stop()
-    }
-  );
 
-  el.addEventListener(
-    'pointercancel',
-    e=>{
-      if(e.pointerId===pid)stop()
-    }
-  );
-}
+      rock.position.set(
 
-bind(
-  $('joyL'),
-  $('knobL'),
-  S.L
-);
+        x,
 
-bind(
-  $('joyR'),
-  $('knobR'),
-  S.R
-);
+        terrainHeight(x, z)
+        +
+        s * 0.55,
 
-bind(
-  $('travel'),
-  $('travelKnob'),
-  S.T,
-  true
-);
+        z
 
-$('rpmUp').onclick=()=>{
-
-  rpm=Math.min(
-    10,
-    rpm+1
-  );
-
-  $('rpmVal').textContent=rpm;
-};
-
-$('rpmDown').onclick=()=>{
-
-  rpm=Math.max(
-    1,
-    rpm-1
-  );
-
-  $('rpmVal').textContent=rpm;
-};
-
-$('startBtn').onclick=()=>{
-
-  if(!renderer)init();
-
-  started=true;
-
-  $('boot').classList.add(
-    'hide'
-  );
-
-  if(
-    document.documentElement.requestFullscreen
-  ){
-    document.documentElement
-      .requestFullscreen()
-      .catch(()=>{});
-  }
-};
-
-function clamp(v,a,b){
-  return Math.max(
-    a,
-    Math.min(b,v)
-  )
-}
-
-function smooth(v,t,r,dt){
-  return v+
-    (t-v)*
-    (1-Math.exp(-r*dt))
-}
-
-const tip=
-  new THREE.Vector3();
-
-function tipWorld(){
-
-  tip.set(
-    0,
-    -.45,
-    1.0
-  );
-
-  bucketPivot.localToWorld(
-    tip
-  );
-
-  return tip;
-}
-
-function update(dt){
-
-  if(!started)return;
-
-  const power=
-    M.fuel>0
-    ?(.45+rpm*.075)
-    :0;
-
-  V.arm=smooth(
-    V.arm,
-    -S.L.y*1.25*power,
-    6,
-    dt
-  );
-
-  V.swing=smooth(
-    V.swing,
-    S.L.x*1.15*power,
-    5,
-    dt
-  );
-
-  V.boom=smooth(
-    V.boom,
-    S.R.y*1.0*power,
-    6,
-    dt
-  );
-
-  V.bucket=smooth(
-    V.bucket,
-    S.R.x*1.55*power,
-    7,
-    dt
-  );
-
-  V.travel=smooth(
-    V.travel,
-    -S.T.y*3.5*power,
-    4,
-    dt
-  );
-
-  M.arm=clamp(
-    M.arm+V.arm*dt,
-    .15,
-    2.25
-  );
-
-  M.boom=clamp(
-    M.boom+V.boom*dt,
-    -.9,
-    .55
-  );
-
-  M.bucket=clamp(
-    M.bucket+V.bucket*dt,
-    -1.1,
-    1.65
-  );
-
-  M.swing+=V.swing*dt;
-
-  M.z=clamp(
-    M.z+V.travel*dt,
-    -22,
-    18
-  );
-
-  boomPivot.rotation.x=
-    -M.boom;
-
-  armPivot.rotation.x=
-    M.arm;
-
-  bucketPivot.rotation.x=
-    M.bucket;
-
-  upper.rotation.y=
-    M.swing;
-
-  excavator.position.set(
-    0,
-    hAt(0,M.z),
-    M.z
-  );
-
-  const p=tipWorld();
-
-  const gh=
-    hAt(p.x,p.z);
-
-  const digging=
-    (
-      S.R.x<-.18 ||
-      S.L.y<-.2
-    ) &&
-    p.y<gh+.15 &&
-    M.load<M.loadCap &&
-    p.z>M.z+1.5;
-
-  if(digging){
-
-    const take=
-      Math.min(
-        .40*dt,
-        M.loadCap-M.load
       );
 
-    M.load+=take;
 
-    deform(
-      p.x,
-      p.z,
-      1.15,
-      -.12*dt
+      rock.rotation.set(
+
+        Math.random(),
+
+        Math.random(),
+
+        Math.random()
+
+      );
+
+
+      rock.castShadow = true;
+
+      rock.receiveShadow = true;
+
+      scene.add(rock);
+
+    }
+
+
+
+    const goal =
+      new THREE.Mesh(
+
+        new THREE.CylinderGeometry(
+          4.2,
+          4.2,
+          0.08,
+          48
+        ),
+
+        new THREE.MeshStandardMaterial({
+
+          color: 0xffcf2f,
+
+          transparent: true,
+
+          opacity: 0.62,
+
+          emissive: 0x5c3f00
+
+        })
+
+      );
+
+
+    goal.position.set(
+
+      13,
+
+      terrainHeight(
+        13,
+        -9
+      )
+      +
+      0.06,
+
+      -9
+
     );
-  }
 
-  const dumping=
-    S.R.x>.25 &&
-    M.load>0;
 
-  if(dumping){
+    scene.add(goal);
 
-    const over=
-      Math.abs(
-        p.x-truck.position.x
-      )<1.8 &&
-      Math.abs(
-        p.z-(truck.position.z-1.2)
-      )<2.8 &&
-      p.y>2.2;
 
-    const q=
-      Math.min(
-        .55*dt,
-        M.load
+
+    const machine =
+      new THREE.Group();
+
+    scene.add(machine);
+
+
+
+    const under =
+      new THREE.Group();
+
+    machine.add(under);
+
+
+    const trackMat =
+      new THREE.MeshStandardMaterial({
+
+        color: 0x22272b,
+
+        roughness: 0.8
+
+      });
+
+
+    const yellow =
+      new THREE.MeshStandardMaterial({
+
+        color: 0xf5b928,
+
+        roughness: 0.55,
+
+        metalness: 0.05
+
+      });
+
+
+    const dark =
+      new THREE.MeshStandardMaterial({
+
+        color: 0x292d30,
+
+        roughness: 0.65
+
+      });
+
+
+    const glass =
+      new THREE.MeshStandardMaterial({
+
+        color: 0x244b61,
+
+        roughness: 0.12,
+
+        metalness: 0.08,
+
+        transparent: true,
+
+        opacity: 0.75
+
+      });
+
+
+
+    function meshBox(
+      parent,
+      sx,
+      sy,
+      sz,
+      material,
+      x = 0,
+      y = 0,
+      z = 0
+    ) {
+
+      const mesh =
+        new THREE.Mesh(
+
+          new THREE.BoxGeometry(
+            sx,
+            sy,
+            sz
+          ),
+
+          material
+
+        );
+
+
+      mesh.position.set(
+        x,
+        y,
+        z
       );
 
-    M.load-=q;
 
-    if(over){
+      mesh.castShadow = true;
 
-      M.truckLoad=
-        (M.truckLoad||0)+q;
+      mesh.receiveShadow = true;
 
-      M.truckLoad=
+
+      parent.add(mesh);
+
+
+      return mesh;
+
+    }
+
+
+
+    meshBox(
+      under,
+      4.1,
+      0.55,
+      0.62,
+      trackMat,
+      0,
+      0.38,
+      1.13
+    );
+
+
+    meshBox(
+      under,
+      4.1,
+      0.55,
+      0.62,
+      trackMat,
+      0,
+      0.38,
+      -1.13
+    );
+
+
+    meshBox(
+      under,
+      2.8,
+      0.45,
+      1.8,
+      dark,
+      0,
+      0.68,
+      0
+    );
+
+
+
+    const upper =
+      new THREE.Group();
+
+
+    upper.position.y = 1.0;
+
+    machine.add(upper);
+
+
+
+    meshBox(
+      upper,
+      3.0,
+      0.55,
+      2.15,
+      yellow,
+      -0.20,
+      0.12,
+      0
+    );
+
+
+    meshBox(
+      upper,
+      1.3,
+      1.55,
+      1.45,
+      yellow,
+      -0.55,
+      1.05,
+      0.10
+    );
+
+
+    meshBox(
+      upper,
+      0.85,
+      1.15,
+      1.15,
+      glass,
+      0.45,
+      1.14,
+      -0.34
+    );
+
+
+    meshBox(
+      upper,
+      1.05,
+      0.9,
+      1.65,
+      dark,
+      -1.05,
+      0.78,
+      0.15
+    );
+
+
+
+    const boomPivot =
+      new THREE.Group();
+
+
+    boomPivot.position.set(
+      0.72,
+      0.75,
+      0
+    );
+
+
+    upper.add(
+      boomPivot
+    );
+
+
+
+    const boomLen = 3.9;
+
+
+    meshBox(
+      boomPivot,
+      boomLen,
+      0.42,
+      0.48,
+      yellow,
+      boomLen / 2,
+      0,
+      0
+    );
+
+
+
+    const stickPivot =
+      new THREE.Group();
+
+
+    stickPivot.position.set(
+      boomLen,
+      0,
+      0
+    );
+
+
+    boomPivot.add(
+      stickPivot
+    );
+
+
+
+    const stickLen = 2.8;
+
+
+    meshBox(
+      stickPivot,
+      stickLen,
+      0.34,
+      0.42,
+      yellow,
+      stickLen / 2,
+      0,
+      0
+    );
+
+
+
+    const bucketPivot =
+      new THREE.Group();
+
+
+    bucketPivot.position.set(
+      stickLen,
+      0,
+      0
+    );
+
+
+    stickPivot.add(
+      bucketPivot
+    );
+
+
+
+    const bucket =
+      new THREE.Mesh(
+
+        new THREE.BoxGeometry(
+          1.15,
+          0.75,
+          0.9
+        ),
+
+        new THREE.MeshStandardMaterial({
+
+          color: 0x8b6a36,
+
+          roughness: 0.9
+
+        })
+
+      );
+
+
+    bucket.position.set(
+      0.48,
+      -0.25,
+      0
+    );
+
+
+    bucket.castShadow = true;
+
+    bucket.receiveShadow = true;
+
+    bucketPivot.add(bucket);
+
+
+
+    let boomA = -0.22;
+
+    let stickA = -0.72;
+
+    let bucketA = -0.25;
+
+    let swing = 0;
+
+    let speed = 0;
+
+    let heading = 0;
+
+
+    let moveInput = {
+      x: 0,
+      y: 0
+    };
+
+
+    let armInput = {
+      x: 0,
+      y: 0
+    };
+
+
+    let hold = {
+
+      swingL: false,
+
+      swingR: false,
+
+      bucketIn: false,
+
+      bucketOut: false
+
+    };
+
+
+    let camMode = 0;
+
+    let reached = false;
+
+
+
+    function joystick(
+      element,
+      onChange
+    ) {
+
+      const stick =
+        element.querySelector(
+          ".stick"
+        );
+
+
+      let pointerId = null;
+
+
+      function update(event) {
+
+        const rect =
+          element.getBoundingClientRect();
+
+
+        const cx =
+          rect.left
+          +
+          rect.width / 2;
+
+
+        const cy =
+          rect.top
+          +
+          rect.height / 2;
+
+
+        let dx =
+          event.clientX - cx;
+
+
+        let dy =
+          event.clientY - cy;
+
+
+        const max =
+          rect.width * 0.33;
+
+
+        const len =
+          Math.hypot(
+            dx,
+            dy
+          )
+          ||
+          1;
+
+
+        if (
+          len > max
+        ) {
+
+          dx =
+            dx / len * max;
+
+          dy =
+            dy / len * max;
+
+        }
+
+
+        stick.style.transform =
+          `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+
+
+        onChange(
+          dx / max,
+          dy / max
+        );
+
+      }
+
+
+
+      element.addEventListener(
+        "pointerdown",
+        event => {
+
+          pointerId =
+            event.pointerId;
+
+
+          element.setPointerCapture(
+            pointerId
+          );
+
+
+          update(event);
+
+        }
+      );
+
+
+
+      element.addEventListener(
+        "pointermove",
+        event => {
+
+          if (
+            event.pointerId
+            ===
+            pointerId
+          ) {
+
+            update(event);
+
+          }
+
+        }
+      );
+
+
+
+      function end(event) {
+
+        if (
+          event.pointerId
+          ===
+          pointerId
+        ) {
+
+          pointerId = null;
+
+
+          stick.style.transform =
+            "translate(-50%, -50%)";
+
+
+          onChange(
+            0,
+            0
+          );
+
+        }
+
+      }
+
+
+
+      element.addEventListener(
+        "pointerup",
+        end
+      );
+
+
+      element.addEventListener(
+        "pointercancel",
+        end
+      );
+
+    }
+
+
+
+    joystick(
+
+      document.getElementById(
+        "moveJoy"
+      ),
+
+      (x, y) => {
+
+        moveInput = {
+          x,
+          y
+        };
+
+      }
+
+    );
+
+
+
+    joystick(
+
+      document.getElementById(
+        "armJoy"
+      ),
+
+      (x, y) => {
+
+        armInput = {
+          x,
+          y
+        };
+
+      }
+
+    );
+
+
+
+    function bindHold(
+      id,
+      key
+    ) {
+
+      const element =
+        document.getElementById(id);
+
+
+      const down =
+        event => {
+
+          event.preventDefault();
+
+          hold[key] = true;
+
+          element.classList.add(
+            "active"
+          );
+
+        };
+
+
+      const up =
+        event => {
+
+          event.preventDefault();
+
+          hold[key] = false;
+
+          element.classList.remove(
+            "active"
+          );
+
+        };
+
+
+      element.addEventListener(
+        "pointerdown",
+        down
+      );
+
+
+      [
+        "pointerup",
+        "pointercancel",
+        "pointerleave"
+      ]
+      .forEach(
+        type =>
+          element.addEventListener(
+            type,
+            up
+          )
+      );
+
+    }
+
+
+
+    bindHold(
+      "swingL",
+      "swingL"
+    );
+
+
+    bindHold(
+      "swingR",
+      "swingR"
+    );
+
+
+    bindHold(
+      "bucketIn",
+      "bucketIn"
+    );
+
+
+    bindHold(
+      "bucketOut",
+      "bucketOut"
+    );
+
+
+
+    document
+      .getElementById(
+        "cameraBtn"
+      )
+      .onclick =
+      () => {
+
+        camMode =
+          (camMode + 1) % 3;
+
+      };
+
+
+
+    document
+      .getElementById(
+        "resetBtn"
+      )
+      .onclick =
+      () => {
+
+        reset();
+
+      };
+
+
+
+    document
+      .getElementById(
+        "helpBtn"
+      )
+      .onclick =
+      () => {
+
+        document
+          .getElementById(
+            "help"
+          )
+          .style.display =
+          "block";
+
+      };
+
+
+
+    document
+      .getElementById(
+        "closeHelp"
+      )
+      .onclick =
+      () => {
+
+        document
+          .getElementById(
+            "help"
+          )
+          .style.display =
+          "none";
+
+      };
+
+
+
+    function reset() {
+
+      machine.position.set(
+
+        -10,
+
+        terrainHeight(
+          -10,
+          8
+        )
+        +
+        0.05,
+
+        8
+
+      );
+
+
+      heading = -0.45;
+
+      speed = 0;
+
+      swing = 0;
+
+      boomA = -0.22;
+
+      stickA = -0.72;
+
+      bucketA = -0.25;
+
+      reached = false;
+
+
+      document
+        .getElementById(
+          "mission"
+        )
+        .innerHTML =
+        'Задача: стигни до <span class="accent">жълтата зона</span><br>после тренирай стрелата и кофата.';
+
+    }
+
+
+    reset();
+
+
+
+    function clamp(
+      value,
+      min,
+      max
+    ) {
+
+      return Math.max(
+        min,
+        Math.min(
+          max,
+          value
+        )
+      );
+
+    }
+
+
+
+    const clock =
+      new THREE.Clock();
+
+
+
+    function update(dt) {
+
+      const throttle =
+        clamp(
+          -moveInput.y,
+          -1,
+          1
+        );
+
+
+      const steer =
+        clamp(
+          moveInput.x,
+          -1,
+          1
+        );
+
+
+      const targetSpeed =
+        throttle * 5.4;
+
+
+      speed +=
+        (
+          targetSpeed
+          -
+          speed
+        )
+        *
         Math.min(
           1,
-          M.truckLoad
+          dt * 2.8
         );
 
-      if(M.truckLoad>=.995){
 
-        M.trucks++;
-        M.money+=250;
-        M.truckLoad=0;
+      if (
+        Math.abs(throttle)
+        <
+        0.05
+      ) {
 
-        H.mission.textContent=
-          `Камиони ${M.trucks}/${M.missionTarget} · +€250`;
+        speed *=
+          Math.pow(
+            0.25,
+            dt
+          );
 
-        truck.position.z=-28;
-
-        setTimeout(
-          ()=>H.mission.textContent=
-          `Мисия: натовари ${M.missionTarget} камиона`,
-          1200
-        );
       }
 
-    }else{
 
-      deform(
-        p.x,
-        p.z,
-        1.0,
-        .09*dt
-      );
+      heading -=
+
+        steer
+        *
+        dt
+        *
+        (
+          0.55
+          +
+          Math.min(
+            Math.abs(speed),
+            4
+          )
+          *
+          0.12
+        )
+        *
+        (
+          speed >= 0
+          ?
+          1
+          :
+          -1
+        );
+
+
+      machine.position.x +=
+
+        Math.cos(heading)
+        *
+        speed
+        *
+        dt;
+
+
+      machine.position.z -=
+
+        Math.sin(heading)
+        *
+        speed
+        *
+        dt;
+
+
+      machine.position.x =
+        clamp(
+          machine.position.x,
+          -40,
+          40
+        );
+
+
+      machine.position.z =
+        clamp(
+          machine.position.z,
+          -40,
+          40
+        );
+
+
+      machine.rotation.y =
+        heading;
+
+
+
+      const x =
+        machine.position.x;
+
+
+      const z =
+        machine.position.z;
+
+
+      const front = 2.0;
+
+      const side = 1.1;
+
+
+      const fx =
+        x
+        +
+        Math.cos(heading)
+        *
+        front;
+
+
+      const fz =
+        z
+        -
+        Math.sin(heading)
+        *
+        front;
+
+
+      const bx =
+        x
+        -
+        Math.cos(heading)
+        *
+        front;
+
+
+      const bz =
+        z
+        +
+        Math.sin(heading)
+        *
+        front;
+
+
+      const lx =
+        x
+        +
+        Math.cos(
+          heading
+          +
+          Math.PI / 2
+        )
+        *
+        side;
+
+
+      const lz =
+        z
+        -
+        Math.sin(
+          heading
+          +
+          Math.PI / 2
+        )
+        *
+        side;
+
+
+      const rx =
+        x
+        +
+        Math.cos(
+          heading
+          -
+          Math.PI / 2
+        )
+        *
+        side;
+
+
+      const rz =
+        z
+        -
+        Math.sin(
+          heading
+          -
+          Math.PI / 2
+        )
+        *
+        side;
+
+
+      const hf =
+        terrainHeight(
+          fx,
+          fz
+        );
+
+
+      const hb =
+        terrainHeight(
+          bx,
+          bz
+        );
+
+
+      const hl =
+        terrainHeight(
+          lx,
+          lz
+        );
+
+
+      const hr =
+        terrainHeight(
+          rx,
+          rz
+        );
+
+
+      const pitch =
+        Math.atan2(
+          hf - hb,
+          2 * front
+        );
+
+
+      const roll =
+        Math.atan2(
+          hl - hr,
+          2 * side
+        );
+
+
+      machine.position.y =
+
+        terrainHeight(
+          x,
+          z
+        )
+        +
+        0.05
+        +
+        Math.sin(
+          performance.now()
+          *
+          0.012
+        )
+        *
+        Math.min(
+          Math.abs(speed)
+          *
+          0.003,
+          0.012
+        );
+
+
+      machine.rotation.x +=
+
+        (
+          pitch
+          -
+          machine.rotation.x
+        )
+        *
+        Math.min(
+          1,
+          dt * 5
+        );
+
+
+      machine.rotation.z +=
+
+        (
+          -roll
+          -
+          machine.rotation.z
+        )
+        *
+        Math.min(
+          1,
+          dt * 5
+        );
+
+
+
+      boomA +=
+
+        (-armInput.y)
+        *
+        dt
+        *
+        0.72;
+
+
+      stickA +=
+
+        armInput.x
+        *
+        dt
+        *
+        0.88;
+
+
+      if (
+        hold.swingL
+      ) {
+
+        swing +=
+          dt * 0.78;
+
+      }
+
+
+      if (
+        hold.swingR
+      ) {
+
+        swing -=
+          dt * 0.78;
+
+      }
+
+
+      if (
+        hold.bucketIn
+      ) {
+
+        bucketA +=
+          dt * 1.05;
+
+      }
+
+
+      if (
+        hold.bucketOut
+      ) {
+
+        bucketA -=
+          dt * 1.05;
+
+      }
+
+
+      boomA =
+        clamp(
+          boomA,
+          -0.85,
+          0.72
+        );
+
+
+      stickA =
+        clamp(
+          stickA,
+          -1.7,
+          0.35
+        );
+
+
+      bucketA =
+        clamp(
+          bucketA,
+          -1.25,
+          0.75
+        );
+
+
+      upper.rotation.y =
+        swing;
+
+
+      boomPivot.rotation.z =
+        boomA;
+
+
+      stickPivot.rotation.z =
+        stickA;
+
+
+      bucketPivot.rotation.z =
+        bucketA;
+
+
+
+      const distance =
+        Math.hypot(
+
+          machine.position.x
+          -
+          goal.position.x,
+
+          machine.position.z
+          -
+          goal.position.z
+
+        );
+
+
+      if (
+        distance < 4.2
+        &&
+        !reached
+      ) {
+
+        reached = true;
+
+
+        document
+          .getElementById(
+            "mission"
+          )
+          .innerHTML =
+          '<span class="good">ЗОНАТА Е ДОСТИГНАТА ✓</span><br>Сега тренирай кулата, стрелата и кофата.';
+
+      }
+
+
+      document
+        .getElementById(
+          "speed"
+        )
+        .textContent =
+
+        (
+          Math.abs(speed)
+          *
+          3.6
+        )
+        .toFixed(1);
+
+
+      document
+        .getElementById(
+          "tilt"
+        )
+        .textContent =
+
+        (
+          Math.max(
+            Math.abs(pitch),
+            Math.abs(roll)
+          )
+          *
+          180
+          /
+          Math.PI
+        )
+        .toFixed(1)
+        +
+        "°";
+
     }
-  }
 
-  truck.position.z+=
-    (
-      M.truckLoad===0 &&
-      truck.position.z<-8
-    )
-    ?7*dt
-    :0;
 
-  truck.position.y=
-    hAt(
-      truck.position.x,
-      truck.position.z
+
+    const camPos =
+      new THREE.Vector3();
+
+
+    const target =
+      new THREE.Vector3();
+
+
+
+    function updateCamera(dt) {
+
+      const forward =
+        new THREE.Vector3(
+
+          Math.cos(heading),
+
+          0,
+
+          -Math.sin(heading)
+
+        );
+
+
+      if (
+        camMode === 0
+      ) {
+
+        camPos
+          .copy(
+            machine.position
+          )
+          .addScaledVector(
+            forward,
+            -9
+          )
+          .add(
+            new THREE.Vector3(
+              0,
+              5.8,
+              0
+            )
+          );
+
+
+        target
+          .copy(
+            machine.position
+          )
+          .add(
+            new THREE.Vector3(
+              0,
+              1.5,
+              0
+            )
+          )
+          .addScaledVector(
+            forward,
+            2.2
+          );
+
+      }
+
+      else if (
+        camMode === 1
+      ) {
+
+        camPos
+          .copy(
+            machine.position
+          )
+          .addScaledVector(
+            forward,
+            1.1
+          )
+          .add(
+            new THREE.Vector3(
+              0,
+              2.75,
+              0
+            )
+          );
+
+
+        target
+          .copy(
+            machine.position
+          )
+          .add(
+            new THREE.Vector3(
+              0,
+              2.1,
+              0
+            )
+          )
+          .addScaledVector(
+            forward,
+            12
+          );
+
+      }
+
+      else {
+
+        camPos
+          .copy(
+            machine.position
+          )
+          .add(
+            new THREE.Vector3(
+              0,
+              13,
+              0
+            )
+          );
+
+
+        target
+          .copy(
+            machine.position
+          );
+
+      }
+
+
+      camera.position.lerp(
+
+        camPos,
+
+        Math.min(
+          1,
+          dt * 4
+        )
+
+      );
+
+
+      camera.lookAt(
+        target
+      );
+
+    }
+
+
+
+    function animate() {
+
+      requestAnimationFrame(
+        animate
+      );
+
+
+      const dt =
+        Math.min(
+          clock.getDelta(),
+          0.033
+        );
+
+
+      update(dt);
+
+      updateCamera(dt);
+
+
+      renderer.render(
+        scene,
+        camera
+      );
+
+    }
+
+
+    animate();
+
+
+
+    addEventListener(
+      "resize",
+      () => {
+
+        camera.aspect =
+          innerWidth
+          /
+          innerHeight;
+
+
+        camera.updateProjectionMatrix();
+
+
+        renderer.setSize(
+          innerWidth,
+          innerHeight
+        );
+
+      }
     );
 
-  M.fuel=
-    Math.max(
-      0,
-      M.fuel-
-      dt*(.008+.008*rpm)
+
+    document.addEventListener(
+
+      "gesturestart",
+
+      event =>
+        event.preventDefault(),
+
+      {
+        passive: false
+      }
+
     );
 
-  bucketSoil.visible=
-    M.load>.02;
+  })();
 
-  bucketSoil.scale.y=
-    .2+
-    .7*(M.load/M.loadCap);
-
-  const tl=
-    M.truckLoad||0;
-
-  truckSoil.visible=
-    tl>.01;
-
-  truckSoil.scale.y=
-    Math.max(
-      .03,
-      tl
-    );
-
-  truckSoil.position.y=
-    1.4+
-    .35*tl;
-
-  if(
-    M.trucks>=M.missionTarget
-  ){
-    H.mission.textContent=
-      `Мисия завършена! Общо €${M.money}`;
-  }
-}
-
-function cameraUpdate(){
-
-  const pos=
-    new THREE.Vector3(
-      -.9,
-      2.25,
-      .45
-    );
-
-  upper.localToWorld(
-    pos
-  );
-
-  camera.position.lerp(
-    pos,
-    .35
-  );
-
-  const target=
-    new THREE.Vector3(
-      .2,
-      1.1,
-      4.8
-    );
-
-  upper.localToWorld(
-    target
-  );
-
-  camera.lookAt(
-    target
-  );
-}
-
-function hud(){
-
-  H.bucket.textContent=
-    Math.round(
-      M.load/
-      M.loadCap*
-      100
-    )+'%';
-
-  H.truck.textContent=
-    Math.round(
-      (M.truckLoad||0)*
-      100
-    )+'%';
-
-  H.fuel.textContent=
-    Math.round(
-      M.fuel
-    )+'%';
-
-  H.cash.textContent=
-    '€'+M.money;
-}
-
-function loop(){
-
-  requestAnimationFrame(
-    loop
-  );
-
-  if(!renderer)return;
-
-  const dt=
-    Math.min(
-      clock.getDelta(),
-      .04
-    );
-
-  update(dt);
-  cameraUpdate();
-  hud();
-
-  renderer.render(
-    scene,
-    camera
-  );
-}
-
-})();
-</script>
+  </script>
 
 </body>
 </html>
