@@ -3,889 +3,681 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>Империя 1453 — Mobile Grand Strategy</title>
+<title>Султан 1453</title>
+
 <style>
-:root{
-  --bg:#101417;--panel:#171d21;--panel2:#21292e;--line:#39444b;--text:#f4f1e8;
-  --muted:#a9b1b5;--gold:#d0aa59;--ottoman:#3f6d4c;--byz:#694b7d;--serbia:#8b5e49;
-  --hungary:#8a3c43;--venice:#9b823d;--water:#2f5668;
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
 html,body{
   margin:0;
-  width:100%;
   height:100%;
   overflow:hidden;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif
-}
-button{font:inherit}
-
-#app{
-  height:100dvh;
-  display:flex;
-  flex-direction:column;
-  background:#0f1417
+  background:#101519;
+  color:#eee;
+  font-family:system-ui,-apple-system,sans-serif
 }
 
-.topbar{
+button{
+  color:#fff;
+  font:inherit
+}
+
+.top{
   height:58px;
-  flex:0 0 58px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:env(safe-area-inset-top) 10px 0;
-  background:#12171a;
-  border-bottom:1px solid #30383d;
-  z-index:20
+  padding:5px 10px;
+  background:#11191d;
+  border-bottom:1px solid #3c454a
 }
 
-.title{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-weight:800
-}
-
-.title .crest{
-  font-size:24px
-}
-
-.title small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  font-weight:600
-}
-
-.resources{
-  display:flex;
-  gap:6px;
-  font-size:11px
+.logo{
+  font-weight:900;
+  color:#e1bd69
 }
 
 .res{
-  background:#20272b;
-  border:1px solid #303a40;
-  border-radius:8px;
+  display:flex;
+  gap:5px;
+  font-size:11px
+}
+
+.pill{
   padding:5px 7px;
-  white-space:nowrap
+  background:#222d32;
+  border-radius:8px
 }
 
 #world{
   position:relative;
-  flex:1;
+  height:calc(100dvh - 148px);
   overflow:hidden;
-  background:#21363f
+  background:#315769
 }
 
-#mapWrap{
+#camera{
   position:absolute;
-  inset:0;
-  touch-action:none;
-  transform-origin:center center
+  width:1400px;
+  height:900px;
+  transform-origin:0 0;
+  touch-action:none
 }
 
 svg{
-  width:100%;
-  height:100%;
-  display:block;
-  background:linear-gradient(#294a5a,#23404c)
+  width:1400px;
+  height:900px
 }
 
-.sea-label{
-  fill:#8fb1bd;
-  font-size:21px;
-  font-weight:700;
-  opacity:.42;
-  letter-spacing:2px
-}
-
-.province{
-  stroke:#263136;
-  stroke-width:2.1;
-  transition:.15s;
-  cursor:pointer
-}
-
-.province.selected{
-  stroke:#f1d381;
-  stroke-width:4;
-  filter:brightness(1.15)
-}
-
-.ottoman{fill:var(--ottoman)}
-.byz{fill:var(--byz)}
-.serbia{fill:var(--serbia)}
-.hungary{fill:var(--hungary)}
-.venice{fill:var(--venice)}
-.neutral{fill:#6f6b55}
-
-.city-dot{
-  fill:#e6d9ad;
-  stroke:#302a20;
-  stroke-width:2
-}
-
-.capital{
-  fill:#f0c85f;
-  stroke:#3b2c0e;
+.prov{
+  stroke:#293438;
   stroke-width:3
 }
 
-.city-name{
-  fill:#f4ead1;
-  font-size:14px;
+.o{fill:#456f4e}
+.b{fill:#70517d}
+.s{fill:#80574b}
+.h{fill:#873e45}
+.v{fill:#988143}
+.n{fill:#716c57}
+
+.label{
+  fill:#f4ead4;
+  font-size:18px;
   font-weight:800;
   paint-order:stroke;
-  stroke:#1c2327;
-  stroke-width:3px
+  stroke:#20272b;
+  stroke-width:4
 }
 
-.country-name{
-  fill:#e9e4d7;
-  font-size:18px;
-  font-weight:900;
-  opacity:.35;
-  letter-spacing:2px
-}
-
-.army-g{
-  cursor:pointer
-}
-
-.army-shadow{
-  fill:#000;
-  opacity:.35
-}
-
-.army-box{
-  fill:#152019;
-  stroke:#83c58f;
-  stroke-width:2.5
-}
-
-.army-box.enemy{
-  fill:#301719;
-  stroke:#d0747b
-}
-
-.army-txt{
+.country{
   fill:#fff;
-  font-size:11px;
-  font-weight:900
+  opacity:.25;
+  font-size:29px;
+  font-weight:900;
+  letter-spacing:3px
 }
 
-.route{
-  stroke:#f1ce68;
-  stroke-width:4;
-  stroke-dasharray:8 7;
-  fill:none;
-  opacity:.9
+.city{
+  fill:#e6ca76;
+  stroke:#30250e;
+  stroke-width:3
 }
 
-#hud{
+.army{
   position:absolute;
-  top:10px;
-  left:10px;
-  right:10px;
+  min-width:105px;
+  padding:8px;
+  border:2px solid #8fd39a;
+  border-radius:10px;
+  background:#17251bcc;
+  text-align:center;
+  font-size:11px;
+  font-weight:900;
+  box-shadow:0 5px 14px #0008
+}
+
+.army.enemy{
+  border-color:#d97a80;
+  background:#35191bcc
+}
+
+#panel{
+  display:none;
+  position:absolute;
+  right:8px;
+  top:8px;
+  width:min(330px,85vw);
+  max-height:75%;
+  overflow:auto;
+  background:#131b1fee;
+  border:1px solid #526067;
+  border-radius:14px;
+  z-index:20
+}
+
+.ph{
   display:flex;
   justify-content:space-between;
-  z-index:8;
-  pointer-events:none
+  padding:11px;
+  border-bottom:1px solid #344047
 }
 
-.dateBox,.speedBox{
-  pointer-events:auto;
-  background:#10171bcc;
-  border:1px solid #445159;
-  border-radius:10px;
-  backdrop-filter:blur(8px)
-}
-
-.dateBox{
-  padding:7px 9px;
-  font-size:12px;
-  font-weight:800
-}
-
-.speedBox{
-  display:flex;
-  overflow:hidden
-}
-
-.speedBox button{
-  width:38px;
-  height:36px;
-  border:0;
-  background:transparent;
-  color:white;
-  font-weight:900
-}
-
-.speedBox button.active{
-  background:#7a642c;
-  color:#fff0b8
-}
-
-#sidePanel{
-  position:absolute;
-  top:56px;
-  right:8px;
-  width:min(310px,80vw);
-  max-height:63%;
-  overflow:auto;
-  z-index:12;
-  background:#12191ded;
-  border:1px solid #47545b;
-  border-radius:14px;
-  backdrop-filter:blur(12px);
-  display:none;
-  box-shadow:0 10px 30px #0008
-}
-
-.panelHead{
-  padding:12px;
-  border-bottom:1px solid #303c42;
-  display:flex;
-  align-items:center;
-  justify-content:space-between
-}
-
-.panelHead h3{
-  margin:0;
-  color:var(--gold);
-  font-size:17px
+.ph b{
+  color:#e1bd69
 }
 
 .close{
   border:0;
-  background:#273238;
-  color:white;
   border-radius:8px;
-  width:32px;
-  height:32px
+  background:#303b40;
+  padding:5px 9px
 }
 
-.panelBody{
-  padding:10px
+.pb{
+  padding:9px
 }
 
-.stat{
+.row{
   display:flex;
   justify-content:space-between;
-  gap:10px;
+  gap:8px;
   padding:8px 2px;
-  border-bottom:1px solid #293238;
+  border-bottom:1px solid #2d373c;
   font-size:13px
 }
 
-.stat span{
-  color:var(--muted)
+.row span{
+  color:#abb6ba
 }
 
-.bigBtn{
+.btn{
   width:100%;
-  margin-top:8px;
-  border:1px solid #4c5b63;
-  border-radius:10px;
-  padding:11px 10px;
-  color:white;
-  background:#26333a;
+  padding:10px;
+  margin-top:7px;
+  border:1px solid #53636b;
+  border-radius:9px;
+  background:#29383f;
   font-weight:800
 }
 
-.bigBtn.gold{
-  background:#745d25;
-  border-color:#a78639
+.green{
+  background:#315e3c
 }
 
-.bigBtn.green{
-  background:#2d5d3a;
-  border-color:#4d8f5c
+.red{
+  background:#71343a
 }
 
-.bigBtn.red{
-  background:#6a3033;
-  border-color:#a95055
-}
-
-.bigBtn:active{
-  transform:scale(.985)
+.gold{
+  background:#745e29
 }
 
 .bottom{
-  height:92px;
-  flex:0 0 92px;
-  padding:7px 8px calc(7px + env(safe-area-inset-bottom));
+  height:90px;
+  padding:6px 7px calc(6px + env(safe-area-inset-bottom));
   display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-  background:#11171a;
-  border-top:1px solid #323b40;
-  z-index:30
+  grid-template-columns:repeat(6,1fr);
+  gap:5px;
+  background:#11191d;
+  border-top:1px solid #3b454a
 }
 
-.navBtn{
-  border:1px solid #3c484e;
-  border-radius:11px;
-  background:#1c2428;
-  color:#eef2f2;
-  font-size:10px;
-  font-weight:800;
-  padding:5px 2px
+.nav{
+  border:1px solid #3d494f;
+  border-radius:9px;
+  background:#202a2f;
+  font-size:9px;
+  font-weight:800
 }
 
-.navBtn .ico{
-  display:block;
-  font-size:21px;
-  margin-bottom:2px
-}
-
-.navBtn.active{
-  background:#6e5722;
-  border-color:#aa893c
+.nav i{
+  font-style:normal;
+  font-size:20px;
+  display:block
 }
 
 #toast{
+  display:none;
   position:absolute;
-  left:50%;
+  z-index:50;
   top:65px;
+  left:50%;
   transform:translateX(-50%);
-  background:#0f171be8;
-  border:1px solid #56656d;
+  background:#10181bea;
+  border:1px solid #5d6a70;
   border-radius:10px;
   padding:9px 12px;
   font-size:12px;
-  z-index:40;
-  display:none;
-  max-width:85%;
   text-align:center
 }
 
-#orders{
-  position:absolute;
-  left:50%;
-  bottom:12px;
-  transform:translateX(-50%);
-  z-index:11;
+#event{
   display:none;
-  background:#121a1ee8;
-  border:1px solid #4e5c62;
-  border-radius:12px;
-  padding:7px;
-  gap:6px
-}
-
-#orders button{
-  border:0;
-  border-radius:9px;
-  padding:10px 12px;
-  color:white;
-  background:#2b373d;
-  font-weight:800;
-  font-size:12px
-}
-
-#orders .attack{
-  background:#713338
-}
-
-#battleBanner{
   position:absolute;
+  z-index:40;
   left:50%;
-  top:18%;
-  transform:translateX(-50%);
-  z-index:15;
-  display:none;
-  background:#151c20ef;
-  border:1px solid #7b6a45;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(390px,90vw);
+  background:#151d21;
+  border:1px solid #756641;
   border-radius:15px;
-  padding:12px;
-  width:min(440px,88vw);
-  text-align:center;
-  box-shadow:0 12px 35px #000a
+  padding:13px;
+  box-shadow:0 15px 45px #000c
 }
 
-#battleBanner h2{
-  margin:0 0 6px;
-  color:#f1d07a;
-  font-size:19px
+#event h3{
+  margin:0 0 7px;
+  color:#e1bd69
 }
 
-.progress{
-  height:8px;
-  background:#273036;
-  border-radius:6px;
-  overflow:hidden;
-  margin:8px 0
-}
-
-.progress>div{
-  height:100%;
-  background:#d4b05d;
-  width:0%
-}
-
-.tutorial{
+.hint{
   position:absolute;
-  left:10px;
-  bottom:13px;
-  z-index:6;
-  background:#10181bc9;
-  border:1px solid #405058;
-  border-radius:10px;
-  padding:8px 10px;
-  font-size:11px;
-  color:#dfe6e8;
-  max-width:230px
-}
-
-@media (orientation:portrait){
-  .bottom{
-    height:100px;
-    flex-basis:100px
-  }
-
-  .resources{
-    gap:3px
-  }
-
-  .res{
-    padding:4px 5px;
-    font-size:10px
-  }
+  left:8px;
+  bottom:8px;
+  background:#11191dcc;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:10px;
+  z-index:8
 }
 </style>
 </head>
 
 <body>
 
-<div id="app">
+<div class="top">
 
-  <div class="topbar">
-
-    <div class="title">
-      <div class="crest">☪️</div>
-      <div>
-        ИМПЕРИЯ 1453
-        <small>Мехмед II • Османска държава</small>
-      </div>
-    </div>
-
-    <div class="resources">
-      <div class="res">💰 <b id="gold">12 000</b></div>
-      <div class="res">👥 <b id="manpower">24 500</b></div>
-      <div class="res">🌾 <b id="food">18 000</b></div>
-    </div>
-
+  <div class="logo">
+    ☪ СУЛТАН 1453
   </div>
 
-  <div id="world">
+  <div class="res">
 
-    <div id="mapWrap">
-
-      <svg id="map" viewBox="0 0 1000 650" preserveAspectRatio="xMidYMid slice">
-
-        <rect width="1000" height="650" fill="#2f5668"/>
-
-        <text x="650" y="525" class="sea-label">ЕГЕЙСКО МОРЕ</text>
-        <text x="680" y="180" class="sea-label">ЧЕРНО МОРЕ</text>
-
-        <path
-          id="p-serbia"
-          class="province serbia"
-          data-name="Сърбия"
-          data-owner="Сърбия"
-          d="M90,90 L280,65 L340,150 L305,260 L175,275 L80,190 Z"
-        />
-
-        <path
-          id="p-hungary"
-          class="province hungary"
-          data-name="Унгария"
-          data-owner="Унгария"
-          d="M70,0 L410,0 L390,85 L280,65 L90,90 Z"
-        />
-
-        <path
-          id="p-rumelia"
-          class="province ottoman"
-          data-name="Румелия"
-          data-owner="Османци"
-          d="M305,260 L340,150 L455,120 L535,200 L500,340 L365,355 Z"
-        />
-
-        <path
-          id="p-edirne"
-          class="province ottoman"
-          data-name="Одринска провинция"
-          data-owner="Османци"
-          d="M455,120 L575,120 L625,210 L535,260 L500,200 Z"
-        />
-
-        <path
-          id="p-thrace"
-          class="province ottoman"
-          data-name="Тракия"
-          data-owner="Османци"
-          d="M500,340 L535,260 L625,210 L690,270 L650,365 L555,390 Z"
-        />
-
-        <path
-          id="p-byz"
-          class="province byz"
-          data-name="Константинопол"
-          data-owner="Византия"
-          d="M625,210 L715,205 L745,260 L690,270 Z"
-        />
-
-        <path
-          id="p-venice"
-          class="province venice"
-          data-name="Венециански владения"
-          data-owner="Венеция"
-          d="M175,275 L305,260 L365,355 L315,455 L175,430 L120,345 Z"
-        />
-
-        <path
-          id="p-bursa"
-          class="province ottoman"
-          data-name="Бурса"
-          data-owner="Османци"
-          d="M690,270 L745,260 L850,295 L835,395 L700,410 L650,365 Z"
-        />
-
-        <path
-          id="p-anatolia"
-          class="province ottoman"
-          data-name="Анадола"
-          data-owner="Османци"
-          d="M835,395 L850,295 L1000,260 L1000,500 L880,515 Z"
-        />
-
-        <path
-          id="p-izmir"
-          class="province neutral"
-          data-name="Западна Анадола"
-          data-owner="Неутрални бейлици"
-          d="M650,365 L700,410 L835,395 L880,515 L715,600 L575,515 Z"
-        />
-
-        <text x="410" y="260" class="country-name">ОСМАНЦИ</text>
-        <text x="670" y="242" class="country-name">ВИЗАНТИЯ</text>
-        <text x="150" y="175" class="country-name">СЪРБИЯ</text>
-
-        <path
-          id="route1"
-          class="route"
-          style="display:none"
-          d="M520,245 C570,245 620,245 675,245"
-        />
-
-        <circle class="city-dot capital" cx="515" cy="220" r="9"/>
-        <text x="528" y="214" class="city-name">Одрин</text>
-
-        <circle class="city-dot" cx="755" cy="345" r="8"/>
-        <text x="769" y="340" class="city-name">Бурса</text>
-
-        <circle class="city-dot capital" cx="690" cy="240" r="10"/>
-        <text x="704" y="235" class="city-name">Константинопол</text>
-
-        <circle class="city-dot" cx="585" cy="345" r="7"/>
-        <text x="597" y="340" class="city-name">Галиполи</text>
-
-        <g id="armyMehmed" class="army-g" transform="translate(565,260)">
-
-          <ellipse
-            class="army-shadow"
-            cx="0"
-            cy="20"
-            rx="42"
-            ry="9"
-          />
-
-          <rect
-            class="army-box"
-            x="-42"
-            y="-22"
-            rx="10"
-            ry="10"
-            width="84"
-            height="44"
-          />
-
-          <text
-            class="army-txt"
-            x="0"
-            y="-4"
-            text-anchor="middle"
-          >
-            ☪ МЕХМЕД II
-          </text>
-
-          <text
-            class="army-txt"
-            x="0"
-            y="12"
-            text-anchor="middle"
-            id="armyCount"
-          >
-            18 500
-          </text>
-
-        </g>
-
-        <g id="armyByz" class="army-g" transform="translate(695,270)">
-
-          <ellipse
-            class="army-shadow"
-            cx="0"
-            cy="20"
-            rx="36"
-            ry="8"
-          />
-
-          <rect
-            class="army-box enemy"
-            x="-38"
-            y="-20"
-            rx="10"
-            ry="10"
-            width="76"
-            height="40"
-          />
-
-          <text
-            class="army-txt"
-            x="0"
-            y="-3"
-            text-anchor="middle"
-          >
-            ✝ ГАРНИЗОН
-          </text>
-
-          <text
-            class="army-txt"
-            x="0"
-            y="12"
-            text-anchor="middle"
-            id="enemyCount"
-          >
-            7 200
-          </text>
-
-        </g>
-
-      </svg>
-
+    <div class="pill">
+      💰 <b id="money">48 000</b>
     </div>
 
-    <div id="hud">
-
-      <div class="dateBox">
-        <span id="date">1 април 1453</span>
-      </div>
-
-      <div class="speedBox">
-        <button id="pauseBtn" class="active" onclick="setSpeed(0)">Ⅱ</button>
-        <button id="s1" onclick="setSpeed(1)">▶</button>
-        <button id="s2" onclick="setSpeed(2)">▶▶</button>
-        <button id="s3" onclick="setSpeed(3)">▶▶▶</button>
-      </div>
-
+    <div class="pill">
+      🌾 <b id="food">32 000</b>
     </div>
 
-    <div id="toast"></div>
-
-    <div id="sidePanel"></div>
-
-    <div id="orders">
-      <button onclick="moveToConstantinople()">Придвижи</button>
-      <button class="attack" onclick="startSiege()">Обсада</button>
+    <div class="pill">
+      👥 <b id="mp">42 000</b>
     </div>
-
-    <div id="battleBanner">
-
-      <h2>🏰 Обсада на Константинопол</h2>
-
-      <div id="battleText">
-        Артилерията подготвя стените...
-      </div>
-
-      <div class="progress">
-        <div id="battleProgress"></div>
-      </div>
-
-      <div style="font-size:12px;color:#aeb7bb">
-        Щурмът ще започне при 100%
-      </div>
-
-    </div>
-
-    <div class="tutorial" id="tutorial">
-      Докосни <b>армията на Мехмед</b>, после избери „Придвижи“ или „Обсада“.
-    </div>
-
-  </div>
-
-  <div class="bottom">
-
-    <button class="navBtn active" onclick="openRealm(this)">
-      <span class="ico">🗺️</span>
-      Карта
-    </button>
-
-    <button class="navBtn" onclick="openArmyMenu(this)">
-      <span class="ico">⚔️</span>
-      Армия
-    </button>
-
-    <button class="navBtn" onclick="openEconomy(this)">
-      <span class="ico">💰</span>
-      Икономика
-    </button>
-
-    <button class="navBtn" onclick="openDiplomacy(this)">
-      <span class="ico">🤝</span>
-      Дипломация
-    </button>
-
-    <button class="navBtn" onclick="openState(this)">
-      <span class="ico">🏛️</span>
-      Държава
-    </button>
 
   </div>
 
 </div>
 
+<div id="world">
+
+  <div id="camera">
+
+    <svg viewBox="0 0 1400 900">
+
+      <rect
+        width="1400"
+        height="900"
+        fill="#315769"
+      />
+
+      <path
+        class="prov h"
+        d="M0 0H650L600 150 390 170 170 130 0 190Z"
+      />
+
+      <path
+        class="prov s"
+        d="M60 190L170 130 390 170 470 330 310 410 80 360Z"
+      />
+
+      <path
+        class="prov o"
+        d="M390 170L600 150 760 230 690 410 470 330Z"
+      />
+
+      <path
+        class="prov o"
+        d="M470 330L690 410 720 555 480 570 310 410Z"
+      />
+
+      <path
+        class="prov v"
+        d="M80 360L310 410 480 570 300 690 70 600Z"
+      />
+
+      <path
+        id="constantinople"
+        class="prov b"
+        d="M690 410L805 390 855 455 720 490Z"
+      />
+
+      <path
+        class="prov o"
+        d="M720 490L855 455 1060 510 1020 670 800 650 720 555Z"
+      />
+
+      <path
+        class="prov o"
+        d="M1060 510L1400 430V720L1150 760 1020 670Z"
+      />
+
+      <path
+        class="prov n"
+        d="M800 650L1020 670 1150 760 940 900H650L630 770Z"
+      />
+
+      <text
+        class="country"
+        x="470"
+        y="300"
+      >
+        ОСМАНСКА ИМПЕРИЯ
+      </text>
+
+      <text
+        class="country"
+        x="145"
+        y="285"
+      >
+        СЪРБИЯ
+      </text>
+
+      <circle
+        class="city"
+        cx="650"
+        cy="335"
+        r="10"
+      />
+
+      <text
+        class="label"
+        x="666"
+        y="330"
+      >
+        Одрин
+      </text>
+
+      <circle
+        class="city"
+        cx="790"
+        cy="430"
+        r="11"
+      />
+
+      <text
+        class="label"
+        x="810"
+        y="425"
+      >
+        Константинопол
+      </text>
+
+      <circle
+        class="city"
+        cx="900"
+        cy="570"
+        r="9"
+      />
+
+      <text
+        class="label"
+        x="916"
+        y="565"
+      >
+        Бурса
+      </text>
+
+      <circle
+        class="city"
+        cx="610"
+        cy="515"
+        r="8"
+      />
+
+      <text
+        class="label"
+        x="625"
+        y="510"
+      >
+        Галиполи
+      </text>
+
+    </svg>
+
+    <div
+      id="army"
+      class="army"
+      style="left:670px;top:390px"
+    >
+      ☪ МЕХМЕД II
+      <br>
+      <span id="armyMen">22 000</span>
+    </div>
+
+    <div
+      class="army enemy"
+      style="left:800px;top:450px"
+    >
+      ✝ ГАРНИЗОН
+      <br>
+      7 500
+    </div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <div id="panel"></div>
+
+  <div id="event"></div>
+
+  <div class="hint">
+    ☝️ Влачи картата • 🤏 zoom с два пръста
+  </div>
+
+</div>
+
+<div class="bottom">
+
+  <button
+    class="nav"
+    onclick="mapMenu()"
+  >
+    <i>🗺️</i>
+    Карта
+  </button>
+
+  <button
+    class="nav"
+    onclick="armyMenu()"
+  >
+    <i>⚔️</i>
+    Армия
+  </button>
+
+  <button
+    class="nav"
+    onclick="taxMenu()"
+  >
+    <i>💰</i>
+    Данъци
+  </button>
+
+  <button
+    class="nav"
+    onclick="dipMenu()"
+  >
+    <i>🤝</i>
+    Дипломация
+  </button>
+
+  <button
+    class="nav"
+    onclick="lawMenu()"
+  >
+    <i>📜</i>
+    Закони
+  </button>
+
+  <button
+    class="nav"
+    onclick="pashaMenu()"
+  >
+    <i>👑</i>
+    Паши
+  </button>
+
+</div>
+
 <script>
 
-const state={
-  gold:12000,
-  manpower:24500,
-  food:18000,
+const S={
 
-  day:1,
-  month:4,
-  year:1453,
+  money:48000,
 
-  speed:0,
+  food:32000,
 
-  selectedArmy:false,
+  mp:42000,
 
-  army:{
-    x:565,
-    y:260,
-    men:18500,
-    morale:91,
-    artillery:72,
-    training:78
+  army:22000,
+
+  jan:5000,
+
+  azap:7000,
+
+  sipahi:4000,
+
+  akinji:3000,
+
+  topcu:3000,
+
+  taxRate:12,
+
+  stability:78,
+
+  prestige:45,
+
+  law:"Умерени данъци",
+
+  relations:{
+    Сърбия:15,
+    Унгария:-35,
+    Венеция:-22,
+    Византия:-100
   },
 
-  enemy:{
-    men:7200,
-    morale:88
-  },
+  provs:[
 
-  siege:0,
+    {
+      n:"Одрин",
+      due:6200,
+      paid:true,
+      loy:88
+    },
 
-  constantinopleOwner:"Византия",
+    {
+      n:"Бурса",
+      due:7400,
+      paid:true,
+      loy:84
+    },
 
-  income:1850,
-  expenses:1120,
+    {
+      n:"Румелия",
+      due:9100,
+      paid:false,
+      loy:58
+    },
 
-  stability:74,
-  prestige:38,
-  warSupport:82,
+    {
+      n:"Галиполи",
+      due:3800,
+      paid:true,
+      loy:91
+    }
 
-  timer:null
+  ],
+
+  pashas:[
+
+    {
+      n:"Заганос паша",
+      loy:92,
+      corr:8,
+      job:"Везир"
+    },
+
+    {
+      n:"Халил паша",
+      loy:61,
+      corr:34,
+      job:"Везир"
+    },
+
+    {
+      n:"Иса паша",
+      loy:74,
+      corr:18,
+      job:"Управител"
+    }
+
+  ]
+
 };
 
-const monthNames=[
-  "януари",
-  "февруари",
-  "март",
-  "април",
-  "май",
-  "юни",
-  "юли",
-  "август",
-  "септември",
-  "октомври",
-  "ноември",
-  "декември"
-];
+const panel=
+document.getElementById("panel");
 
-const panel=document.getElementById("sidePanel");
-const armyG=document.getElementById("armyMehmed");
-const orders=document.getElementById("orders");
+const ev=
+document.getElementById("event");
 
-function fmt(n){
-  return Math.round(n).toLocaleString("bg-BG");
+function f(n){
+
+  return Math.round(n)
+  .toLocaleString("bg-BG");
+
 }
 
 function sync(){
 
-  document.getElementById("gold").textContent=fmt(state.gold);
+  money.textContent=
+  f(S.money);
 
-  document.getElementById("manpower").textContent=fmt(state.manpower);
+  food.textContent=
+  f(S.food);
 
-  document.getElementById("food").textContent=fmt(state.food);
+  mp.textContent=
+  f(S.mp);
 
-  document.getElementById("armyCount").textContent=fmt(state.army.men);
-
-  document.getElementById("enemyCount").textContent=fmt(state.enemy.men);
-
-  document.getElementById("date").textContent=
-  `${state.day} ${monthNames[state.month-1]} ${state.year}`;
-
-  armyG.setAttribute(
-    "transform",
-    `translate(${state.army.x},${state.army.y})`
-  );
+  armyMen.textContent=
+  f(S.army);
 
 }
 
 function toast(t){
 
-  const e=document.getElementById("toast");
+  let e=
+  document.getElementById("toast");
 
   e.textContent=t;
 
   e.style.display="block";
 
-  clearTimeout(e._t);
-
-  e._t=setTimeout(()=>{
-    e.style.display="none";
-  },1900);
+  setTimeout(
+    ()=>{
+      e.style.display="none";
+    },
+    1800
+  );
 
 }
 
-function closePanel(){
-  panel.style.display="none";
-}
-
-function showPanel(title,body){
+function show(t,b){
 
   panel.innerHTML=`
 
-  <div class="panelHead">
+  <div class="ph">
 
-    <h3>${title}</h3>
+    <b>${t}</b>
 
-    <button class="close" onclick="closePanel()">
+    <button
+      class="close"
+      onclick="panel.style.display='none'"
+    >
       ✕
     </button>
 
   </div>
 
-  <div class="panelBody">
+  <div class="pb">
 
-    ${body}
+    ${b}
 
   </div>
 
@@ -895,142 +687,73 @@ function showPanel(title,body){
 
 }
 
-function selectNav(btn){
+function mapMenu(){
 
-  document.querySelectorAll(".navBtn").forEach(x=>{
-    x.classList.remove("active");
-  });
+  panel.style.display="none";
 
-  btn.classList.add("active");
-
-}
-
-function setSpeed(s){
-
-  state.speed=s;
-
-  document.querySelectorAll(".speedBox button").forEach(b=>{
-    b.classList.remove("active");
-  });
-
-  document.getElementById(
-    s===0 ? "pauseBtn" : "s"+s
-  ).classList.add("active");
-
-  clearInterval(state.timer);
-
-  if(s>0){
-
-    state.timer=setInterval(
-      tick,
-      1100/s
-    );
-
-  }
+  toast(
+    "Свободна карта — влачи и приближавай"
+  );
 
 }
 
-function tick(){
+function armyMenu(){
 
-  state.day++;
-
-  state.food-=18;
-
-  if(state.day>30){
-
-    state.day=1;
-
-    state.month++;
-
-    state.gold+=state.income-state.expenses;
-
-    state.manpower+=120;
-
-  }
-
-  if(state.month>12){
-
-    state.month=1;
-
-    state.year++;
-
-  }
-
-  if(state.food<0){
-
-    state.food=0;
-
-    state.stability=Math.max(
-      0,
-      state.stability-2
-    );
-
-    state.army.morale=Math.max(
-      25,
-      state.army.morale-3
-    );
-
-  }
-
-  sync();
-
-}
-
-function openRealm(btn){
-
-  selectNav(btn);
-
-  closePanel();
-
-  toast("Карта на Балканите и Анадола");
-
-}
-
-function openArmyMenu(btn){
-
-  selectNav(btn);
-
-  showPanel(
-    "⚔️ Османска армия",
+  show(
+    "⚔️ Армия на Мехмед",
     `
 
-    <div class="stat">
-      <span>Главна армия</span>
-      <b>${fmt(state.army.men)} души</b>
+    <div class=row>
+      <span>Еничари</span>
+      <b>${f(S.jan)}</b>
     </div>
 
-    <div class="stat">
-      <span>Морал</span>
-      <b>${state.army.morale}%</b>
+    <div class=row>
+      <span>Азаби</span>
+      <b>${f(S.azap)}</b>
     </div>
 
-    <div class="stat">
-      <span>Артилерия</span>
-      <b>${state.army.artillery} оръдия</b>
+    <div class=row>
+      <span>Сипахи</span>
+      <b>${f(S.sipahi)}</b>
     </div>
 
-    <div class="stat">
-      <span>Обучение</span>
-      <b>${state.army.training}%</b>
+    <div class=row>
+      <span>Акънджии</span>
+      <b>${f(S.akinji)}</b>
     </div>
 
-    <div class="stat">
-      <span>Командир</span>
-      <b>Мехмед II</b>
+    <div class=row>
+      <span>Топчии</span>
+      <b>${f(S.topcu)}</b>
     </div>
 
     <button
-      class="bigBtn green"
-      onclick="recruit()"
+      class="btn green"
+      onclick="recruit('jan',1000,1800)"
     >
-      Набери +1 000 пехота — 800 💰
+      +1 000 еничари — 1 800
     </button>
 
     <button
-      class="bigBtn"
-      onclick="train()"
+      class="btn green"
+      onclick="recruit('sipahi',500,1400)"
     >
-      Обучение — 500 💰
+      +500 сипахи — 1 400
+    </button>
+
+    <button
+      class="btn green"
+      onclick="recruit('akinji',500,800)"
+    >
+      +500 акънджии — 800
+    </button>
+
+    <button
+      class="btn green"
+      onclick="recruit('topcu',250,1600)"
+    >
+      +250 топчии — 1 600
     </button>
 
     `
@@ -1038,626 +761,626 @@ function openArmyMenu(btn){
 
 }
 
-function openEconomy(btn){
-
-  selectNav(btn);
-
-  showPanel(
-    "💰 Икономика",
-    `
-
-    <div class="stat">
-      <span>Приходи</span>
-      <b>${fmt(state.income)} 💰 / месец</b>
-    </div>
-
-    <div class="stat">
-      <span>Разходи</span>
-      <b>${fmt(state.expenses)} 💰 / месец</b>
-    </div>
-
-    <div class="stat">
-      <span>Баланс</span>
-      <b>${fmt(state.income-state.expenses)} 💰</b>
-    </div>
-
-    <div class="stat">
-      <span>Храна</span>
-      <b>${fmt(state.food)}</b>
-    </div>
-
-    <button
-      class="bigBtn gold"
-      onclick="invest()"
-    >
-      Инвестирай в търговия — 1 500 💰
-    </button>
-
-    `
-  );
-
-}
-
-function openDiplomacy(btn){
-
-  selectNav(btn);
-
-  showPanel(
-    "🤝 Дипломация",
-    `
-
-    <div class="stat">
-      <span>Сърбия</span>
-      <b>+10</b>
-    </div>
-
-    <div class="stat">
-      <span>Унгария</span>
-      <b>-42</b>
-    </div>
-
-    <div class="stat">
-      <span>Венеция</span>
-      <b>-28</b>
-    </div>
-
-    <div class="stat">
-      <span>Византия</span>
-      <b style="color:#e87b7f">
-        Война
-      </b>
-    </div>
-
-    <button
-      class="bigBtn"
-      onclick="toast('Пратеник е изпратен във Венеция')"
-    >
-      Изпрати пратеник
-    </button>
-
-    `
-  );
-
-}
-
-function openState(btn){
-
-  selectNav(btn);
-
-  showPanel(
-    "🏛️ Османска държава",
-    `
-
-    <div class="stat">
-      <span>Султан</span>
-      <b>Мехмед II</b>
-    </div>
-
-    <div class="stat">
-      <span>Столица</span>
-      <b>Одрин</b>
-    </div>
-
-    <div class="stat">
-      <span>Стабилност</span>
-      <b>${state.stability}%</b>
-    </div>
-
-    <div class="stat">
-      <span>Престиж</span>
-      <b>${state.prestige}</b>
-    </div>
-
-    <div class="stat">
-      <span>Подкрепа за войната</span>
-      <b>${state.warSupport}%</b>
-    </div>
-
-    <button
-      class="bigBtn gold"
-      onclick="toast('Цел: превземи Константинопол')"
-    >
-      📜 Главна мисия
-    </button>
-
-    `
-  );
-
-}
-
-function recruit(){
+function recruit(k,num,cost){
 
   if(
-    state.gold<800 ||
-    state.manpower<1000
+    S.money<cost ||
+    S.mp<num
   ){
+
     return toast(
       "Недостатъчно ресурси"
     );
+
   }
 
-  state.gold-=800;
+  S.money-=cost;
 
-  state.manpower-=1000;
+  S.mp-=num;
 
-  state.army.men+=1000;
+  S[k]+=num;
 
-  state.army.morale=Math.max(
-    65,
-    state.army.morale-2
-  );
+  S.army+=num;
 
   sync();
 
-  openArmyMenu(
-    document.querySelectorAll(".navBtn")[1]
-  );
+  armyMenu();
 
 }
 
-function train(){
+function taxMenu(){
 
-  if(state.gold<500){
+  show(
+    "💰 Данъци",
 
-    return toast(
-      "Нямаш достатъчно злато"
-    );
+    S.provs.map(
+      (p,i)=>`
 
-  }
+      <div class=row>
 
-  state.gold-=500;
+        <span>
+          ${p.n}
+          <br>
+          Лоялност ${p.loy}%
+        </span>
 
-  state.army.training=Math.min(
-    100,
-    state.army.training+6
-  );
+        <b>
+          ${f(p.due)} акчета
+          <br>
+          ${
+            p.paid
+            ? "✅ платен"
+            : "❌ НЕ ПЛАЩА"
+          }
+        </b>
 
-  state.army.morale=Math.min(
-    100,
-    state.army.morale+5
-  );
-
-  sync();
-
-  openArmyMenu(
-    document.querySelectorAll(".navBtn")[1]
-  );
-
-}
-
-function invest(){
-
-  if(state.gold<1500){
-
-    return toast(
-      "Нямаш достатъчно злато"
-    );
-
-  }
-
-  state.gold-=1500;
-
-  state.income+=180;
-
-  sync();
-
-  toast(
-    "Търговските приходи се увеличиха"
-  );
-
-}
-
-armyG.addEventListener(
-  "click",
-  ()=>{
-
-    state.selectedArmy=true;
-
-    orders.style.display="flex";
-
-    document.getElementById(
-      "tutorial"
-    ).style.display="none";
-
-    showPanel(
-      "⚔️ Армията на Мехмед",
-      `
-
-      <div class="stat">
-        <span>Численост</span>
-        <b>${fmt(state.army.men)}</b>
       </div>
 
-      <div class="stat">
-        <span>Морал</span>
-        <b>${state.army.morale}%</b>
-      </div>
-
-      <div class="stat">
-        <span>Артилерия</span>
-        <b>${state.army.artillery}</b>
-      </div>
-
-      <div class="stat">
-        <span>Позиция</span>
-        <b>Тракия</b>
-      </div>
-
-      <button
-        class="bigBtn green"
-        onclick="moveToConstantinople()"
-      >
-        Придвижи към Константинопол
-      </button>
-
-      <button
-        class="bigBtn red"
-        onclick="startSiege()"
-      >
-        Започни обсада
-      </button>
-
-      `
-    );
-
-  }
-);
-
-document.getElementById(
-  "armyByz"
-).addEventListener(
-  "click",
-  ()=>{
-
-    showPanel(
-      "✝ Византийски гарнизон",
-      `
-
-      <div class="stat">
-        <span>Защитници</span>
-        <b>${fmt(state.enemy.men)}</b>
-      </div>
-
-      <div class="stat">
-        <span>Морал</span>
-        <b>${state.enemy.morale}%</b>
-      </div>
-
-      <div class="stat">
-        <span>Крепост</span>
-        <b>5 / 5</b>
-      </div>
-
-      <div class="stat">
-        <span>Командир</span>
-        <b>Джустиниани</b>
-      </div>
-
-      `
-    );
-
-  }
-);
-
-document.querySelectorAll(
-  ".province"
-).forEach(
-  p=>{
-
-    p.addEventListener(
-      "click",
-      e=>{
-
-        document.querySelectorAll(
-          ".province"
-        ).forEach(
-          x=>x.classList.remove(
-            "selected"
-          )
-        );
-
-        p.classList.add(
-          "selected"
-        );
-
-        const n=p.dataset.name;
-
-        const o=p.dataset.owner;
-
-        showPanel(
-          "🗺️ "+n,
-          `
-
-          <div class="stat">
-            <span>Владетел</span>
-            <b>${o}</b>
-          </div>
-
-          <div class="stat">
-            <span>Терен</span>
-            <b>
-            ${
-              n.includes(
-                "Константинопол"
-              )
-              ? "Град / крепост"
-              : "Провинция"
-            }
-            </b>
-          </div>
-
-          <div class="stat">
-            <span>Лоялност</span>
-            <b>
-            ${
-              o==="Османци"
-              ? "82%"
-              : "—"
-            }
-            </b>
-          </div>
-
-          `
-        );
-
-        e.stopPropagation();
-
+      ${
+        !p.paid
+        ? `
+        <button
+          class="btn red"
+          onclick="collect(${i})"
+        >
+          Изпрати събирачи
+        </button>
+        `
+        : ""
       }
-    );
 
-  }
-);
+      `
+    ).join("")
 
-function moveToConstantinople(){
-
-  closePanel();
-
-  orders.style.display="none";
-
-  document.getElementById(
-    "route1"
-  ).style.display="block";
-
-  let sx=state.army.x;
-
-  let sy=state.army.y;
-
-  let tx=650;
-
-  let ty=255;
-
-  let start=performance.now();
-
-  let dur=1400;
-
-  function anim(now){
-
-    let t=Math.min(
-      1,
-      (now-start)/dur
-    );
-
-    let e=
-      t<.5
-      ? 2*t*t
-      : 1-Math.pow(
-          -2*t+2,
-          2
-        )/2;
-
-    state.army.x=
-      sx+(tx-sx)*e;
-
-    state.army.y=
-      sy+(ty-sy)*e;
-
-    sync();
-
-    if(t<1){
-
-      requestAnimationFrame(anim);
-
-    }else{
-
-      document.getElementById(
-        "route1"
-      ).style.display="none";
-
-      toast(
-        "Армията пристигна пред стените на Константинопол"
-      );
-
-    }
-
-  }
-
-  requestAnimationFrame(anim);
+  );
 
 }
 
-function startSiege(){
+function collect(i){
 
-  if(state.army.x<620){
+  let p=S.provs[i];
+
+  if(Math.random()<.7){
+
+    p.paid=true;
+
+    S.money+=p.due;
+
+    p.loy-=10;
 
     toast(
-      "Първо придвижи армията към Константинопол"
-    );
-
-    return;
-
-  }
-
-  closePanel();
-
-  orders.style.display="none";
-
-  setSpeed(0);
-
-  const b=document.getElementById(
-    "battleBanner"
-  );
-
-  const bar=document.getElementById(
-    "battleProgress"
-  );
-
-  const txt=document.getElementById(
-    "battleText"
-  );
-
-  b.style.display="block";
-
-  let p=state.siege;
-
-  const iv=setInterval(
-    ()=>{
-
-      p+=Math.max(
-        3,
-        Math.floor(
-          state.army.artillery/20
-        )
-      );
-
-      state.siege=Math.min(
-        100,
-        p
-      );
-
-      bar.style.width=
-        state.siege+"%";
-
-      if(state.siege<35){
-
-        txt.textContent=
-        "Големите оръдия разбиват външните стени...";
-
-      }else if(state.siege<70){
-
-        txt.textContent=
-        "Защитниците отслабват. Пробивът се разширява...";
-
-      }else if(state.siege<100){
-
-        txt.textContent=
-        "Еничарите се подготвят за решителен щурм...";
-
-      }
-
-      if(state.siege>=100){
-
-        clearInterval(iv);
-
-        setTimeout(
-          resolveSiege,
-          700
-        );
-
-      }
-
-    },
-    450
-  );
-
-}
-
-function resolveSiege(){
-
-  const b=document.getElementById(
-    "battleBanner"
-  );
-
-  const byz=document.getElementById(
-    "p-byz"
-  );
-
-  const power=
-    state.army.men*
-    (state.army.morale/100)+
-    state.army.artillery*90;
-
-  const defense=
-    state.enemy.men*
-    (state.enemy.morale/100)+
-    5200;
-
-  if(power>defense){
-
-    const loss=Math.floor(
-      1800+
-      Math.random()*1100
-    );
-
-    state.army.men-=loss;
-
-    state.enemy.men=0;
-
-    state.gold+=3000;
-
-    state.prestige+=25;
-
-    state.constantinopleOwner=
-      "Османци";
-
-    byz.setAttribute(
-      "class",
-      "province ottoman selected"
-    );
-
-    byz.dataset.owner=
-      "Османци";
-
-    document.getElementById(
-      "armyByz"
-    ).style.display="none";
-
-    document.querySelector(
-      ".title small"
-    ).textContent=
-      "Мехмед II • Фатих";
-
-    document.getElementById(
-      "battleText"
-    ).textContent=
-      `🏆 Константинопол падна! Загуби: ${fmt(loss)} души`;
-
-    toast(
-      "🏆 КОНСТАНТИНОПОЛ Е ПРЕВЗЕТ!"
+      "Данъкът е събран"
     );
 
   }else{
 
-    const loss=Math.floor(
-      3200+
-      Math.random()*1800
+    p.loy-=18;
+
+    S.stability-=3;
+
+    toast(
+      "Събирачите са прогонени — риск от бунт"
     );
-
-    state.army.men=Math.max(
-      2000,
-      state.army.men-loss
-    );
-
-    state.army.morale-=25;
-
-    document.getElementById(
-      "battleText"
-    ).textContent=
-      `Щурмът е отблъснат. Загуби: ${fmt(loss)} души`;
 
   }
 
   sync();
 
-  setTimeout(
-    ()=>{
-      b.style.display="none";
-    },
-    3500
+  taxMenu();
+
+}
+
+function dipMenu(){
+
+  show(
+    "🤝 Дипломация",
+
+    Object.entries(
+      S.relations
+    ).map(
+      ([n,r])=>`
+
+      <div class=row>
+
+        <span>${n}</span>
+
+        <b>${r}</b>
+
+      </div>
+
+      <button
+        class="btn"
+        onclick="improve('${n}')"
+      >
+        Подобри отношения — 500
+      </button>
+
+      `
+    ).join("")
+
   );
 
 }
 
+function improve(n){
+
+  if(S.money<500){
+
+    return toast(
+      "Нямаш пари"
+    );
+
+  }
+
+  S.money-=500;
+
+  S.relations[n]=
+  Math.min(
+    100,
+    S.relations[n]+10
+  );
+
+  sync();
+
+  dipMenu();
+
+}
+
+function lawMenu(){
+
+  show(
+    "📜 Закони",
+    `
+
+    <div class=row>
+      <span>Текущ данъчен закон</span>
+      <b>${S.law}</b>
+    </div>
+
+    <button
+      class="btn"
+      onclick="law('Ниски данъци',8,6)"
+    >
+      Ниски данъци
+    </button>
+
+    <button
+      class="btn gold"
+      onclick="law('Умерени данъци',12,0)"
+    >
+      Умерени данъци
+    </button>
+
+    <button
+      class="btn red"
+      onclick="law('Тежки данъци',18,-8)"
+    >
+      Тежки данъци
+    </button>
+
+    <div class=row>
+      <span>Стабилност</span>
+      <b>${S.stability}%</b>
+    </div>
+
+    `
+  );
+
+}
+
+function law(n,r,stab){
+
+  S.law=n;
+
+  S.taxRate=r;
+
+  S.stability=
+  Math.max(
+    0,
+    Math.min(
+      100,
+      S.stability+stab
+    )
+  );
+
+  S.provs.forEach(
+    p=>{
+      p.due=
+      Math.round(
+        p.due*(r/12)
+      );
+    }
+  );
+
+  toast(
+    "Законът е променен"
+  );
+
+  lawMenu();
+
+}
+
+function pashaMenu(){
+
+  show(
+    "👑 Паши",
+
+    S.pashas.map(
+      (p,i)=>`
+
+      <div class=row>
+
+        <span>
+          ${p.n}
+          <br>
+          ${p.job}
+        </span>
+
+        <b>
+          Лоялност ${p.loy}%
+          <br>
+          Корупция ${p.corr}%
+        </b>
+
+      </div>
+
+      <button
+        class="btn"
+        onclick="punish(${i},'warn')"
+      >
+        Предупреди
+      </button>
+
+      <button
+        class="btn red"
+        onclick="punish(${i},'fine')"
+      >
+        Глоби
+      </button>
+
+      <button
+        class="btn red"
+        onclick="punish(${i},'dismiss')"
+      >
+        Свали от длъжност
+      </button>
+
+      `
+    ).join("")
+
+  );
+
+}
+
+function punish(i,a){
+
+  let p=
+  S.pashas[i];
+
+  if(a==="warn"){
+
+    p.loy-=3;
+
+    p.corr=
+    Math.max(
+      0,
+      p.corr-5
+    );
+
+    toast(
+      "Пашата е предупреден"
+    );
+
+  }
+
+  if(a==="fine"){
+
+    S.money+=1200;
+
+    p.loy-=12;
+
+    p.corr-=8;
+
+    toast(
+      "Имущество е конфискувано"
+    );
+
+  }
+
+  if(a==="dismiss"){
+
+    p.job=
+    "Без длъжност";
+
+    p.loy-=20;
+
+    S.prestige+=2;
+
+    toast(
+      "Пашата е свален от длъжност"
+    );
+
+  }
+
+  pashaMenu();
+
+  sync();
+
+}
+
+document.getElementById(
+  "army"
+).onclick=armyMenu;
+
+
+
+/* =========================
+   ДВИЖЕНИЕ НА КАРТАТА
+   ========================= */
+
+const cam=
+document.getElementById("camera");
+
+const world=
+document.getElementById("world");
+
+let scale=.82;
+
+let x=-220;
+
+let y=-120;
+
+let last=null;
+
+let pinch=null;
+
+let moved=false;
+
+function apply(){
+
+  cam.style.transform=
+  `translate(${x}px,${y}px) scale(${scale})`;
+
+}
+
+function dist(a,b){
+
+  return Math.hypot(
+    a.clientX-b.clientX,
+    a.clientY-b.clientY
+  );
+
+}
+
+world.addEventListener(
+  "touchstart",
+  e=>{
+
+    moved=false;
+
+    if(e.touches.length===1){
+
+      last={
+        x:e.touches[0].clientX,
+        y:e.touches[0].clientY
+      };
+
+    }else if(
+      e.touches.length===2
+    ){
+
+      pinch={
+        d:dist(
+          e.touches[0],
+          e.touches[1]
+        ),
+        s:scale
+      };
+
+      last=null;
+
+    }
+
+  },
+  {
+    passive:false
+  }
+);
+
+world.addEventListener(
+  "touchmove",
+  e=>{
+
+    e.preventDefault();
+
+    moved=true;
+
+    if(
+      e.touches.length===1 &&
+      last
+    ){
+
+      let t=e.touches[0];
+
+      x+=t.clientX-last.x;
+
+      y+=t.clientY-last.y;
+
+      last={
+        x:t.clientX,
+        y:t.clientY
+      };
+
+      apply();
+
+    }else if(
+      e.touches.length===2 &&
+      pinch
+    ){
+
+      scale=
+      Math.max(
+        .5,
+        Math.min(
+          2.3,
+          pinch.s*
+          dist(
+            e.touches[0],
+            e.touches[1]
+          )/
+          pinch.d
+        )
+      );
+
+      apply();
+
+    }
+
+  },
+  {
+    passive:false
+  }
+);
+
+world.addEventListener(
+  "touchend",
+  ()=>{
+
+    last=null;
+
+    pinch=null;
+
+  }
+);
+
+
+
+/* =========================
+   МИШКА ЗА КОМПЮТЪР
+   ========================= */
+
+let md=false;
+
+let mx=0;
+
+let my=0;
+
+world.addEventListener(
+  "mousedown",
+  e=>{
+
+    md=true;
+
+    mx=e.clientX;
+
+    my=e.clientY;
+
+  }
+);
+
+window.addEventListener(
+  "mousemove",
+  e=>{
+
+    if(!md)return;
+
+    x+=e.clientX-mx;
+
+    y+=e.clientY-my;
+
+    mx=e.clientX;
+
+    my=e.clientY;
+
+    apply();
+
+  }
+);
+
+window.addEventListener(
+  "mouseup",
+  ()=>{
+
+    md=false;
+
+  }
+);
+
+world.addEventListener(
+  "wheel",
+  e=>{
+
+    e.preventDefault();
+
+    scale=
+    Math.max(
+      .5,
+      Math.min(
+        2.3,
+        scale*
+        (
+          e.deltaY<0
+          ? 1.1
+          : .9
+        )
+      )
+    );
+
+    apply();
+
+  },
+  {
+    passive:false
+  }
+);
+
+
+
+apply();
+
 sync();
+
+
+
+/* =========================
+   ПЪРВО СЪБИТИЕ
+   ========================= */
+
+setTimeout(
+  ()=>{
+
+    ev.innerHTML=`
+
+    <h3>
+      ⚠️ Румелия отказва да плати данъка
+    </h3>
+
+    <p style="font-size:13px">
+
+      Дължими са
+      <b>9 100 акчета</b>.
+
+      Местните първенци искат отсрочка.
+
+    </p>
+
+    <button
+      class="btn red"
+      onclick="
+        ev.style.display='none';
+        taxMenu()
+      "
+    >
+      Аз ще реша какво да правим
+    </button>
+
+    `;
+
+    ev.style.display="block";
+
+  },
+  1300
+);
 
 </script>
 
